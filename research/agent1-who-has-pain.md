@@ -1,63 +1,84 @@
-# Agent 1 — Who Has This Pain: Verbatim Evidence of Contract-Term Harm
+# Agent 1 — Who Has This Pain (contract/lease/ToS terms hurting real people)
 
-Research for Redline (hypothesis-stage). Goal: find real people, in their own words, describing being hurt by a contract/lease/agreement term they did not understand or did not notice at signing time.
+Searches used: 8 (DuckDuckGo `/html/` queries)
+Pages read: 10 (Reddit `.json` endpoints of threads surfaced by search)
 
-Note on method: Reddit's own domain (reddit.com / old.reddit.com) is blocked to the fetch tool used in this session, so direct r/legaladvice, r/personalfinance, r/freelance, r/Tenant threads could not be pulled even though search results surfaced many relevant discussions. Findings below come from news outlets (Yahoo News, Columbia Journalism Review, CBS News) that quote real, named individuals — these are treated as equally valid "public forum" evidence of the same underlying pain (people not understanding what they signed until it cost them). Hard caps (12 web searches, 15 page reads) were both reached during this research session.
-
----
-
-## Findings
-
-### 1. Timeshare loan contract — sued after a cancellation the lender said it accepted
-
-> "I feel like I was scammed. And I feel like I was misled. I feel like the communications were not clear."
-
-> "It was scary. It was intimidating. And it was embarrassing."
-
-- **Who/where:** Kimberly Mitchell, quoted in Yahoo News (syndicated consumer-affairs story)
-- **URL:** https://www.yahoo.com/news/articles/embarrassing-woman-says-lender-sued-223002011.html
-- **Context:** Mitchell signed a timeshare contract in Myrtle Beach in 2023, got buyer's remorse within 12 hours, and got both the lender (Barclays) and the timeshare company to verbally/in-writing agree to cancel — but a month later Barclays said a payment was due and, when she didn't pay, sued her over the loan tied to the contract terms.
-
-### 2. Timeshare "upgrade" contract — signed without being told about a $55,000 cost
-
-> "But never once did they say that there was going to be any cost involved."
-
-> "And we about fell out of our seat. We could not believe it."
-
-> "I don't know how they could live with themselves. I don't know how they could sleep at night doing this to people."
-
-- **Who/where:** Sandy Parks, quoted in Yahoo News
-- **URL:** https://www.yahoo.com/news/couple-says-salesmen-tricked-them-120753652.html
-- **Context:** Sandy and Joseph Parks were pressured through a high-pressure, fast-moving signing at a timeshare presentation in Florida; weeks later a surprise bill revealed the 27-page contract they signed had committed them to more than $55,000 in additional timeshare purchases.
-
-### 3. Freelance contract rights-grab clause — pressured to sign away rights on a first assignment
-
-> "I didn't want to do it, obviously, but it was one of my first freelance assignments and at the time I was unwilling to push back in case it jeopardized the commission"
-
-- **Who/where:** Holly Robertson, quoted in Columbia Journalism Review
-- **URL:** https://www.cjr.org/watchdog/contract-rights-grab.php
-- **Context:** Robertson, freelancing for Mashable, describes signing a "work-made-for-hire" style rights-grab clause she disagreed with because she felt she had no leverage to push back as an early-career freelancer.
-
-### 4. Freelance contract — no restriction on republication, found out via a stranger's message
-
-> "One day I received a message on Facebook from a Portuguese guy saying he'd read my article in a Portuguese paper. I told him I don't write in Portuguese and he said 'No, it's front page'"
-
-- **Who/where:** Camille Lavoix, quoted in Columbia Journalism Review
-- **URL:** https://www.cjr.org/watchdog/contract-rights-grab.php
-- **Context:** Lavoix, a freelance journalist for French publications, discovered her contract's rights terms allowed her work to be translated and republished elsewhere without her direct knowledge or fair pay — she says she was compensated only "thirty or fifty [British pounds]" after complaining.
-
-### 5. Gym membership contract — billing continued through a closure with no notice
-
-> "I would have appreciated some communication that it was still, my account was still going to be charged"
-
-- **Who/where:** Samantha Grund-Wickramasekera, quoted in CBS News Chicago
-- **URL:** https://www.cbsnews.com/chicago/news/members-say-uptown-fitness-gym-charged-them-for-month-when-it-was-closed-is-now-leaving-them-in-the-dark/
-- **Context:** Uptown Fitness members were charged for a month the gym was closed; Grund-Wickramasekera's complaint centers on the membership contract's billing/continuation terms giving her no expectation of (or warning about) being charged during a shutdown.
+All findings below are real public posts found via DuckDuckGo search of Reddit, read directly from Reddit's `.json` API for verbatim text. Each entry has a verbatim quote, the exact source URL, and one line of context.
 
 ---
 
-## What I could not find (gaps / budget notes)
+## 1. Lease — signed a 50+ page renewal without reading it, thinking it was a notice form
 
-- **Reddit could not be accessed directly.** The fetch tool used in this session returned "unable to fetch from www.reddit.com" for any reddit.com URL, including search-result pages and specific post permalinks (e.g., a teamblind.com Amazon non-compete thread was reachable but contained only questions from the original poster, no verbatim harm quote from them). This is the single biggest gap: r/legaladvice, r/personalfinance, r/freelance, r/Tenant, and r/AskALawyer almost certainly contain more (and more raw/emotional) verbatim quotes than what's captured here, but they were not retrievable within this session's tooling.
-- **No verbatim quote found (within budget) for:** a residential lease early-termination-fee or eviction-clause story from a named person; a forced-arbitration-clause story where a named person describes being blocked from suing (search surfaced a compelling NJ Uber Eats crash/arbitration story, but the source article 404'd and no alternate working source was found within budget); a subscription/auto-renewal (e.g., Adobe, streaming service) story with a named consumer's own words — the Adobe FTC/class-action coverage found was rich in regulatory detail but did not quote an individual consumer; a non-compete clause story where a named worker describes being blindsided by its scope after signing.
-- **Both hard caps were hit before 8 findings were reached:** 12/12 web searches used, 15/15 page reads used (several of the 15 reads were dead ends — 404s, 403s, or pages with no on-point quote — which consumed budget without yielding findings). Per the task's guardrails, no quotes were invented or paraphrased-as-verbatim to fill the gap; only 5 findings met the bar of a real, sourced, verbatim quote.
+> "He got an email, opened it up, and digitally signed *a whole 50+ page lease renewal contract without reading it* thinking that it was the written notice he needed... This is his first ever apartment, he's entirely unfamiliar with contracts."
+
+Source: https://www.reddit.com/r/legaladvice/comments/bjsthb/roommate_didnt_read_what_he_was_signing_how/
+
+Context: Roommate of the poster (first-time renter, Kentucky) digitally signed a full lease renewal without reading it, believing it was a notice-of-intent-to-vacate form.
+
+---
+
+## 2. Lease — auto-renewal clause locked tenant into a full year with no way out
+
+> "They automatically renewed my lease for a year and are asking me to pay 2 months rent to \"break\" the lease they have put in for me. I don't care if it's unethical (or something else) but I really need advice because I don't have that kind of money right now."
+
+Source: https://www.reddit.com/r/UnethicalLifeProTips/comments/145fz85/ulpt_my_apartment_complex_auto_renewed_my_lease/
+
+Context: Tenant in Pittsburgh, PA, gave notice thinking the fixed-term lease would simply end, but an auto-renewal clause (requiring 60 days' notice) had already renewed it for a full year.
+
+---
+
+## 3. Lease — auto-renewal clause "on the first page" cost an extra month's rent, tenant didn't check because "why would I"
+
+> "So after living here for two years (and not looking at the lease...why would I?) I decided to leave... I learned today (1 month before the end of my lease term) that I will be paying an extra month's rent (at month-to-month rates) as they are auto renewing. I checked the lease and sure enough it's on the first page."
+
+Source: https://www.reddit.com/r/legaladvice/comments/grpkqf/being_charged_for_an_extra_month_due_to_an_auto/
+
+Context: Long-term tenant (2 years in the unit) never re-read the lease before moving out and was hit by an auto-renewal clause. A commenter's reply on the same thread bluntly states: "you look at a lease so you can avoid the current situation you're in."
+
+---
+
+## 4. Employment — signed an overly broad non-compete without grasping its reach until trying to change jobs
+
+> "I stupidly signed a noncompete at my last job that, I feel, is way too broad. It says that I can't work for a competitor in any place they do business (40 US states and 6 countries) in any \"similar\" role to what I did for them."
+
+Source: https://www.reddit.com/r/sales/comments/13gi4rc/anyone_here_ever_been_sued_for_violating_a/
+
+Context: Sales professional moving to a direct competitor, discovers only after the fact how sweeping the non-compete clause they signed actually is; asking whether companies actually sue over it.
+
+---
+
+## 5. Freelance/Upwork — vague, unspecific contract left developer exposed to unbounded scope with no way to protect themselves
+
+> "I'm in a situation where I initially started a contract for development work with a small company... they somehow expect me to also be an expert in their industry niche (which I'm not and repeatedly have said that I'm not)... it's now suddenly seeming like this contract is a no-win situation... My profile has all 5 star reviews so I'm concerned that if I ask to end the contract they will give me a poor review."
+
+Source: https://www.reddit.com/r/Upwork/comments/10iez5d/rapid_scope_creep_after_contract_begins/
+
+Context: Freelance developer on Upwork, contract terms/wireframe were vague going in, leaving them trapped between unbounded scope creep and a bad review threat.
+
+---
+
+## 6. Consumer/gym membership — cancellation clause procedure not followed correctly, sent to collections despite a verbal "cancelled" confirmation
+
+> "A month after that, I receive a charge on my credit card for another month of gym membership... Fast forward to now, and I received a notice that they'd sent me to collections for four months worth of unpaid membership dues... Their response was that no records existed on the gym's side that I'd cancelled, and so I was still liable to pay."
+
+Source: https://www.reddit.com/r/personalfinance/comments/x7gok4/gym_failed_to_cancel_contract_and_sent_me_to/
+
+Context: Gym member relied on a verbal cancellation confirmation from staff instead of the contract's required written/formal cancellation procedure, then got sent to collections over the discrepancy.
+
+---
+
+## 7. Lease — early termination clause fee (2 months' rent) discovered only after health emergency (mold) forced a move
+
+> "This is a long story, but basically I believe I'm breaking my lease due to a mold infestation in the apartment... I do not think we should have to pay the early termination fee of 2 month's rent... Also, the early termination clause in our lease states that we have to provide 60 days notice in addition to paying the two month's rent. I have asthma and an infant in the apartment."
+
+Source: https://www.reddit.com/r/legaladvice/comments/5m6d4x/i_need_to_write_an_early_lease_termination_letter/ (original post text preserved verbatim in a LocationBot reply since the original was later deleted)
+
+Context: Tenant with asthma and an infant needed to break a lease immediately over a mold infestation, only to run into a 2-months'-rent early termination fee clause plus a 60-day notice requirement they hadn't planned around.
+
+---
+
+## What I could not find
+
+- No usable first-person account specifically describing being blindsided by an **arbitration clause / class-action waiver** in a consumer Terms of Service (searched directly; DuckDuckGo returned zero results for the exact-phrase query used, and I did not have search budget left to try broader phrasing).
+- No clean, non-deleted first-person account of a freelancer losing IP/copyright ownership specifically because of a "work for hire" clause they didn't understand — the two most promising threads I found (r/freelance "work for hire" clause loopholes discussion and r/freelanceWriters "Violation of IP rights") both had their original post bodies deleted by the time I read them, leaving only comment discussion, not a verbatim first-person quote of the harm.
+- Did not reach a Hacker News, X/Twitter, or BBB/Trustpilot source in this run — all 7 findings came from Reddit, since Reddit consistently surfaced strong, specific, quotable results for every query tried and I hit my findings target before needing to branch out to other platforms.

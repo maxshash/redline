@@ -43,3 +43,7 @@ Issues and specs live as markdown files under `.scratch/<feature-slug>/`. See `d
 ### Domain docs
 
 Single-context — `docs/adr/` at the repo root holds architecture decisions. See `docs/agents/domain.md`.
+
+### Grilling
+
+When running a grilling-style interview, always give a concrete recommended answer per question, not just the question.

@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-11T00:00:00Z",
+  "title": "Design System: Redline",
+  "extensions": {
+    "colorMeta": {
+      "critical": {
+        "role": "primary",
+        "displayName": "Verdict Red",
+        "canonical": "#a6291f",
+        "tonalRamp": ["#3a0e0a", "#571712", "#7a201a", "#a6291f", "#c14b3f", "#d97e70", "#eab3a8", "#f6ddd6"]
+      },
+      "serious": {
+        "role": "secondary",
+        "displayName": "Ochre Serious",
+        "canonical": "#8a5a1c",
+        "tonalRamp": ["#2e1e09", "#452c0d", "#634013", "#8a5a1c", "#a8783c", "#c39c66", "#dcc194", "#efe1c9"]
+      },
+      "noting": {
+        "role": "accent",
+        "displayName": "Worth-Noting Neutral",
+        "canonical": "#55503f",
+        "tonalRamp": ["#1c1a15", "#2a271f", "#3d392c", "#55503f", "#726c56", "#96906f", "#bab494", "#ddd9c2"]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Ink Soft (Cleared)",
+        "canonical": "#4a453c",
+        "tonalRamp": ["#18160f", "#26221b", "#37322a", "#4a453c", "#65605432", "#867f6f", "#aca594", "#d2ccbc"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Typewriter Ink",
+        "canonical": "#1d1b18",
+        "tonalRamp": ["#0a0908", "#141210", "#1d1b18", "#332f29", "#4a453c", "#726c5e", "#a19a86", "#cfc8b4"]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Onion-Skin Paper",
+        "canonical": "#f2ede2",
+        "tonalRamp": ["#4a4436", "#655d4a", "#8a8067", "#b0a68a", "#d0c6a8", "#e9e2d2", "#f2ede2", "#faf8f2"]
+      },
+      "paper-dim": {
+        "role": "neutral",
+        "displayName": "Paper Dim",
+        "canonical": "#e9e2d2",
+        "tonalRamp": ["#3f3a2c", "#59533f", "#7c745a", "#a0967a", "#c2b89c", "#dcd3bd", "#e9e2d2", "#f4efe4"]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Ledger Rule",
+        "canonical": "#c9bfa6",
+        "tonalRamp": ["#403a2b", "#5c5440", "#82785c", "#a89c7c", "#c9bfa6", "#dad2bf", "#e8e2d3", "#f4f0e6"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display / Headline", "purpose": "The single H1 hero line and section headings; same serif family as body, distinguished by size and weight only." },
+      "quote": { "displayName": "Evidentiary Quote", "purpose": "The oversized italic verbatim clause sentence in the ClauseChart — the page's proof, not a caption." },
+      "body": { "displayName": "Body", "purpose": "All supporting prose, capped near 68ch." },
+      "label": { "displayName": "Label / Mono", "purpose": "Stamps, buttons, nav link, element numbering, and the ClauseChart's header/footer bands — always uppercase, always Courier Prime." }
+    },
+    "motion": [
+      { "name": "stamp-in", "value": "520ms cubic-bezier(0.16, 1, 0.3, 1); scale 1.6→1, rotate -6deg→per-tier tilt, blur 1px→0, opacity 0→1 (60% keyframe reaches full opacity)", "purpose": "A stamp landing on paper when a verdict enters view; respects prefers-reduced-motion by skipping to the settled state." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single CTA style, 'Try it on a document' — filled ink, inverts on hover.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Try it on a document</a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; background: #1d1b18; color: #f2ede2; border: 3px solid #1d1b18; padding: 14px 28px; font-family: 'Courier Prime', ui-monospace, monospace; font-size: 0.875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; border-radius: 0; transition: background-color 0.15s, color 0.15s; } .ds-btn-primary:hover { background: #f2ede2; color: #1d1b18; } .ds-btn-primary:focus-visible { outline: 2px solid #a6291f; outline-offset: 3px; }"
+    },
+    {
+      "name": "Stamp — Critical",
+      "kind": "custom",
+      "refersTo": "stamp-critical",
+      "description": "The signature verdict badge, Critical tier: thin red border and text, no fill, stamp-in entrance animation.",
+      "html": "<span class=\"ds-stamp ds-stamp-critical\">Critical</span>",
+      "css": ".ds-stamp { display: inline-flex; align-items: center; gap: 6px; border-width: 3px; border-style: solid; padding: 4px 12px; font-family: 'Courier Prime', ui-monospace, monospace; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; border-radius: 0; background: transparent; animation: ds-stamp-in 520ms cubic-bezier(0.16,1,0.3,1) both; } .ds-stamp-critical { border-color: #a6291f; color: #a6291f; } @keyframes ds-stamp-in { 0% { opacity: 0; transform: scale(1.6) rotate(-6deg); filter: blur(1px); } 60% { opacity: 1; } 100% { opacity: 1; transform: scale(1) rotate(-3deg); filter: blur(0); } }"
+    },
+    {
+      "name": "Stamp — Cleared",
+      "kind": "custom",
+      "refersTo": "stamp-cleared",
+      "description": "The verdict badge for a clause checked and cleared — a first-class outcome, not an absent stamp.",
+      "html": "<span class=\"ds-stamp ds-stamp-cleared\">Cleared</span>",
+      "css": ".ds-stamp-cleared { border-color: #4a453c; color: #4a453c; animation: ds-stamp-in 520ms cubic-bezier(0.16,1,0.3,1) both; } @keyframes ds-stamp-in { 0% { opacity: 0; transform: scale(1.6) rotate(-6deg); filter: blur(1px); } 60% { opacity: 1; } 100% { opacity: 1; transform: scale(1) rotate(-1deg); filter: blur(0); } }"
+    },
+    {
+      "name": "ClauseChart Card",
+      "kind": "card",
+      "refersTo": null,
+      "description": "The signature demonstration component: ink-filled header/footer ledger bands around a ruled list of numbered clause elements, each with a stamp, an oversized quoted sentence, and a rationale line.",
+      "html": "<div class=\"ds-clausechart\"><div class=\"ds-cc-band\"><span>Example agreement — Section 4</span><span>Illustrative, not a real client file</span></div><div class=\"ds-cc-row\"><div class=\"ds-cc-num\">§1</div><div class=\"ds-cc-body\"><span class=\"ds-stamp ds-stamp-critical\">Critical</span><p class=\"ds-cc-quote\">“This Agreement shall automatically renew...”</p><p class=\"ds-cc-rationale\">Easy to miss inside routine renewal language.</p></div></div><div class=\"ds-cc-band\"><span>Elements examined</span><span>3 examined · 2 flagged · 1 cleared</span></div></div>",
+      "css": ".ds-clausechart { border: 3px solid #1d1b18; background: #e9e2d2; font-family: 'Source Serif 4', ui-serif, serif; } .ds-cc-band { display: flex; justify-content: space-between; gap: 12px; background: #1d1b18; color: #f2ede2; padding: 12px 20px; font-family: 'Courier Prime', ui-monospace, monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; } .ds-cc-row { display: grid; grid-template-columns: minmax(0,9rem) 1fr; gap: 16px; padding: 20px; border-top: 3px solid #c9bfa6; } .ds-cc-num { font-family: 'Courier Prime', ui-monospace, monospace; font-weight: 700; color: #4a453c; } .ds-cc-quote { font-style: italic; font-size: 1.25rem; line-height: 1.375; color: #1d1b18; margin: 12px 0; } .ds-cc-rationale { font-size: 0.875rem; color: #4a453c; }"
+    },
+    {
+      "name": "Tier-List Row",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Ruled row pattern pairing a Stamp with a plain-language definition; reused for the severity explainer and (with an em-dash in place of the Stamp) the boundary list.",
+      "html": "<ul class=\"ds-tierlist\"><li class=\"ds-tierlist-row\"><span class=\"ds-stamp ds-stamp-critical\">Critical</span><p>Easy to miss and hard to undo once it's triggered.</p></li></ul>",
+      "css": ".ds-tierlist { list-style: none; margin: 0; padding: 0; border-top: 3px solid #c9bfa6; border-bottom: 3px solid #c9bfa6; } .ds-tierlist-row { display: grid; grid-template-columns: 10rem 1fr; align-items: center; gap: 32px; padding: 24px 0; border-bottom: 3px solid #c9bfa6; font-family: 'Source Serif 4', ui-serif, serif; } .ds-tierlist-row:last-child { border-bottom: none; } .ds-tierlist-row p { color: #4a453c; font-size: 1.125rem; line-height: 1.625; max-width: 68ch; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Claim Chart",
+    "overview": "Redline's landing page is built as a patent examiner's office action, not a SaaS pitch. Onion-skin paper, typewriter labels, and hairline rules stand in for the gradient hero, glyph icons, and floating cards of the category-standard AI-tool look — that arrangement was considered and deliberately rejected (see the surface brief's FORM note). The page proves its own mechanism instead of describing it: a real-looking clause is broken into numbered elements, each stamped with a verdict and backed by its exact quoted sentence, set oversized as proof rather than caption. Color is rationed on purpose. Verdict-red exists only to mark Critical; a quieter ochre-brown marks Serious; two distinct dark neutrals separate \"Worth noting\" from a clause that was checked and cleared. None of these colors ever fill a background — they live only in a thin stamp border and its text, never a flooded row.",
+    "keyCharacteristics": [
+      "Onion-skin cream ground with black typewriter ink, no gradients, no photography, no illustration.",
+      "Two-voice typography: a humanist serif (Source Serif 4) for prose, headlines, and the evidentiary quote; a monospace typewriter face (Courier Prime) reserved for labels, stamps, numbering, and buttons.",
+      "Flat and bordered throughout — 3px hairline-square borders carry structure; no drop shadows anywhere in the shipped page.",
+      "Verdict color is rationed to thin stamp badges only, never a filled background or row tint."
+    ],
+    "rules": [
+      { "name": "The Rationed Ink Rule", "body": "Verdict color (red, ochre, the two dark neutrals) appears only inside a stamp badge's border and label text — border-and-text, never a filled background, never a row tint, never more than one verdict color per row.", "section": "colors" },
+      { "name": "The Two-Voice Rule", "body": "Prose and proof are always set in the serif; anything administrative (a label, a count, a button, a stamp) is always set in the uppercase tracked-out monospace. Never mix the two roles within one text run.", "section": "typography" },
+      { "name": "The Flat-and-Bordered Rule", "body": "Depth is never simulated with a shadow of any kind — hard-offset or soft. A surface is either flush with the page or set apart by a 3px ink border. If a component needs to read as \"raised,\" give it a border and an ink-filled band, not a shadow.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep verdict color inside a stamp's border-and-text only; never fill a row, card, or background with critical/serious/noting color.",
+      "Do render a \"cleared\" verdict as its own stamp (ink-soft border/text), not as the absence of a stamp — a clean result must be as legible as a flagged one.",
+      "Do reserve Courier Prime for labels, counts, numbering, and buttons; keep prose and the evidentiary quote in Source Serif 4.",
+      "Do use 3px ink borders and ink-filled bands for structure and hierarchy, never a shadow."
+    ],
+    "donts": [
+      "Don't reintroduce a box-shadow of any kind (hard-offset or soft) — a 6px 6px 0 0 neobrutalist shadow was tried on the ClauseChart card and removed in finish review; the system is flat-and-bordered, not shadowed.",
+      "Don't reach for the gradient-hero \"AI reviews your contract\" arrangement (hero gradient, floating glass cards, glyph icon set) — that was the rejected category-standard direction, not this world.",
+      "Don't round any corner. No border-radius appears anywhere in the shipped system.",
+      "Don't use the Serious ochre from the original direction contract (#b8802e) — the shipped, normative value is #8a5a1c."
+    ]
+  }
+}

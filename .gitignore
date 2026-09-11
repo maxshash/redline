@@ -44,6 +44,7 @@ next-env.d.ts
 !.vscode/extensions.json
 
 # credentials / keys / secrets
+.env.local
 *.pem
 *.key
 *.p12

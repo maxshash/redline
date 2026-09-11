@@ -23,6 +23,7 @@ Excluded on purpose: payments/billing, OCR, sharing documents between users. Thi
 
 - Every risk flag cites the exact source sentence it came from. A flag with no visible source is a bug.
 - State only what the document says. Where the text doesn't support a claim, don't make it.
+- Any copy the user reads — landing page, UI labels, error messages, empty states — must go through the humanizer skill before it's committed. Copy that sounds like a model wrote it is a bug, not a style nitpick.
 
 ## Standing rules
 
@@ -47,3 +48,13 @@ Single-context — `docs/adr/` at the repo root holds architecture decisions. Se
 ### Grilling
 
 When running a grilling-style interview, always give a concrete recommended answer per question, not just the question.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

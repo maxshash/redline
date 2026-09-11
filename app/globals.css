@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  --font-typewriter: var(--font-typewriter);
+  --font-document: var(--font-document);
+
+  --color-paper: #f2ede2;
+  --color-paper-dim: #e9e2d2;
+  --color-paper-shadow: #d8cfb8;
+  --color-ink: #1d1b18;
+  --color-ink-soft: #4a453c;
+  --color-ink-faint: #8a8371;
+  --color-rule: #c9bfa6;
+  --color-critical: #a6291f;
+  --color-critical-ink: #f2ede2;
+  --color-serious: #8a5a1c;
+  --color-serious-ink: #f2ede2;
+  --color-noting: #55503f;
+  --color-stamp-fade: #b23a2b;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-rule);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-document), ui-serif, serif;
+  }
+
+  ::selection {
+    background: var(--color-critical);
+    color: var(--color-critical-ink);
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-paper-dim);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-ink-faint);
+    border-radius: 0;
+    border: 3px solid var(--color-paper-dim);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-critical);
+    outline-offset: 3px;
+  }
+
+  ::-moz-selection {
+    background: var(--color-critical);
+    color: var(--color-critical-ink);
+  }
+}
+
+@layer utilities {
+  .stamp-enter {
+    animation: stamp-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes stamp-in {
+    0% {
+      opacity: 0;
+      transform: scale(1.6) rotate(-6deg);
+      filter: blur(1px);
+    }
+    60% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) rotate(var(--stamp-tilt, -2deg));
+      filter: blur(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stamp-enter {
+      animation: none;
+      opacity: 1;
+      transform: rotate(var(--stamp-tilt, -2deg));
+    }
+  }
+}

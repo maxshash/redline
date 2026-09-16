@@ -1,0 +1,146 @@
+MASTER CONSULTING SERVICES AGREEMENT
+
+This Master Consulting Services Agreement (the "Agreement") is entered into as of March 3, 2026 (the "Effective Date") by and between Brackenfold Provisioning LLC, a Delaware limited liability company with its principal office at 412 Fenwright Lane, Suite 9, Marrowgate, Delaware 19999 ("Client"), and Tamsin Oyelaran-Pike, an individual residing at 77 Quillon Row, Apartment 3, Harrowby Falls, Oregon 97999 ("Consultant"). Client and Consultant are each a "Party" and together the "Parties".
+
+This Agreement is Client's standard form for independent consultants. Client does not negotiate the terms of this form, and Consultant's signature below indicates acceptance of the Agreement as written.
+
+1. DEFINITIONS
+
+1.1 "Services" means the consulting, design, software development and related services described in one or more Statements of Work.
+
+1.2 "Statement of Work" or "SOW" means a written document signed by both Parties that describes specific Services, deliverables, milestones and fees, and that refers to this Agreement.
+
+1.3 "Work Product" means all deliverables, reports, code, designs, documentation and other materials that Consultant prepares for Client under a Statement of Work.
+
+1.4 "Confidential Information" means non-public business, technical or financial information that one Party discloses to the other in connection with this Agreement and that is marked as confidential or would reasonably be understood to be confidential.
+
+2. SERVICES
+
+2.1 Consultant shall perform the Services described in each Statement of Work in a professional and workmanlike manner consistent with generally accepted industry standards.
+
+2.2 Consultant shall determine the method, details and means of performing the Services, subject to the deliverables and deadlines set out in the applicable Statement of Work.
+
+2.3 Consultant shall record time spent on the Services in Client's designated time-tracking system at least once per week.
+
+2.4 If a Statement of Work conflicts with this Agreement, this Agreement controls unless the Statement of Work expressly states that a specific section of this Agreement is overridden.
+
+2.5 Either Party may request a change to a Statement of Work, and no change is binding until both Parties sign a written change order describing the revised scope, schedule and fees.
+
+3. TERM AND RENEWAL
+
+3.1 This Agreement begins on the Effective Date and continues for an initial term of twelve (12) months (the "Initial Term").
+
+3.2 This Agreement shall automatically renew for successive twelve (12) month renewal terms unless Consultant delivers written notice of non-renewal to Client no earlier than forty-five (45) days and no later than thirty (30) days before the end of the then-current term, and any notice delivered outside that window shall have no effect.
+
+3.3 The Initial Term together with any renewal terms is the "Term".
+
+4. TERMINATION
+
+4.1 Client may terminate this Agreement or any Statement of Work at any time, for any reason or for no reason, effective immediately and without prior notice to Consultant, and Client shall have no obligation to pay for any Services that Client has not accepted as of the date of termination.
+
+4.2 Consultant may terminate this Agreement only if Client materially breaches it and fails to cure the breach within sixty (60) days after receiving written notice describing the breach in reasonable detail.
+
+4.3 On expiration or termination of this Agreement, each Party shall return or destroy the other Party's Confidential Information in its possession, and Consultant shall deliver to Client all completed Work Product.
+
+4.4 Sections 5, 7, 8, 9, 10, 11 and 13 survive expiration or termination of this Agreement.
+
+5. FEES, INVOICING AND PAYMENT
+
+5.1 Client shall pay Consultant at the hourly rate of one hundred and ten dollars ($110) for Services performed, unless a Statement of Work sets a different rate or a fixed fee.
+
+5.2 Consultant shall submit invoices monthly in arrears, and each invoice shall itemize the hours worked, the Services performed and any approved expenses.
+
+5.3 Client shall pay each undisputed invoice within forty-five (45) days after Client receives it.
+
+5.4 If Client disputes any portion of an invoice in good faith, Client shall notify Consultant of the disputed amount and the reason within fifteen (15) days after receiving the invoice and shall pay the undisputed portion on time.
+
+5.5 Client shall deduct a vendor administration fee of four percent (4%) of each invoice amount from every payment to Consultant, and Client may increase this percentage by up to two (2) percentage points on each anniversary of the Effective Date by written notice to Consultant.
+
+5.6 Client shall reimburse reasonable travel expenses that Client has approved in writing before they are incurred, provided that Consultant submits receipts with the relevant invoice.
+
+5.7 Consultant is responsible for all income taxes, self-employment taxes and similar charges on amounts paid under this Agreement.
+
+6. INDEPENDENT CONTRACTOR
+
+6.1 Consultant is an independent contractor, and nothing in this Agreement creates a partnership, joint venture, agency or employment relationship between the Parties.
+
+6.2 Consultant has no authority to bind Client to any contract or obligation, and Consultant shall not represent to any third party that Consultant has such authority.
+
+7. OWNERSHIP OF WORK PRODUCT
+
+7.1 Consultant hereby irrevocably assigns to Client all right, title and interest in and to all Work Product, together with all inventions, software, tools, templates, methods, know-how and other materials that Consultant conceived, developed or owned before or during the Term, whether or not created in connection with the Services or with the use of Client resources.
+
+7.2 Consultant shall sign any further documents that Client reasonably requests to record or perfect the rights described in this Section 7.
+
+7.3 Client shall provide Consultant with access to Client materials that are reasonably necessary to perform the Services, and those materials remain Client's property.
+
+8. CONFIDENTIALITY
+
+8.1 Each Party shall use the other Party's Confidential Information only to perform its obligations or exercise its rights under this Agreement, and shall protect it with at least the same degree of care it uses for its own confidential information of a similar kind, and in no case less than reasonable care.
+
+8.2 Confidential Information does not include information that is or becomes public through no fault of the receiving Party, was already known to the receiving Party without restriction, is independently developed without use of the disclosing Party's information, or is lawfully received from a third party without a duty of confidentiality.
+
+8.3 A Party may disclose Confidential Information to the extent required by law or court order, provided that it gives the disclosing Party prompt notice where legally permitted so that the disclosing Party may seek a protective order.
+
+8.4 The obligations in this Section 8 continue for three (3) years after expiration or termination of this Agreement.
+
+9. INDEMNIFICATION
+
+9.1 Consultant shall defend, indemnify and hold harmless Client and its affiliates, officers, employees and agents from and against any and all claims, losses, damages, liabilities, judgments, fines, penalties, costs and expenses, including attorneys' fees, arising out of or relating in any way to the Services or this Agreement, without limit as to amount and regardless of whether caused in part by the negligence of Client.
+
+9.2 Client shall give Consultant written notice of any claim for which Client seeks indemnification under this Section 9 within a reasonable time after Client becomes aware of it.
+
+10. LIMITATION OF LIABILITY
+
+10.1 In no event shall Client's total liability to Consultant under or in connection with this Agreement exceed the lesser of the fees paid to Consultant in the three (3) months before the claim arose or two thousand dollars ($2,000).
+
+10.2 Neither Party is liable for any delay or failure to perform caused by events beyond its reasonable control, including fire, flood, war, epidemic, government action or failure of public utilities, provided that the affected Party notifies the other Party promptly and resumes performance as soon as practicable.
+
+11. RESTRICTIVE COVENANTS
+
+11.1 During the Term and for twenty-four (24) months after it ends, Consultant shall not, directly or indirectly, provide services similar to the Services to any person or entity that was a customer or prospective customer of Client during the Term, nor solicit or accept work from any such person or entity.
+
+11.2 Neither Party shall use the other Party's name or logo in any publicity without the other Party's prior written consent.
+
+12. COMPLIANCE
+
+12.1 Consultant shall comply with all laws and regulations that apply to Consultant's performance of the Services.
+
+12.2 Consultant shall comply with Client's reasonable written security policies when accessing Client systems, provided that Client gives Consultant a copy of those policies in advance.
+
+13. DISPUTE RESOLUTION
+
+13.1 The Parties shall first attempt in good faith to resolve any dispute through discussion between their designated representatives for a period of at least fifteen (15) days.
+
+13.2 Any dispute arising out of or relating to this Agreement that is not resolved under Section 13.1 shall be resolved exclusively by final and binding arbitration held in Marrowgate, Delaware before a single arbitrator selected by Client, and Consultant waives any right to a jury trial and any right to bring or participate in any class, collective or representative action against Client.
+
+14. NOTICES
+
+14.1 All notices under this Agreement must be in writing and delivered by hand, by recognized overnight courier or by email to the addresses stated at the beginning of this Agreement or to another address a Party designates by notice.
+
+14.2 A notice is effective on delivery if delivered by hand or courier, and on the next business day after sending if sent by email.
+
+15. GENERAL
+
+15.1 This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules.
+
+15.2 Neither Party may assign this Agreement without the other Party's prior written consent, except that either Party may assign it to a successor in a merger or sale of substantially all of its assets.
+
+15.3 If any provision of this Agreement is held unenforceable, the remaining provisions continue in full force and the unenforceable provision shall be limited to the minimum extent necessary.
+
+15.4 A Party's failure to enforce any provision of this Agreement is not a waiver of its right to enforce that provision later.
+
+15.5 This Agreement, together with all Statements of Work, is the entire agreement between the Parties about its subject matter and supersedes all prior discussions and agreements about that subject matter.
+
+15.6 This Agreement may be signed in counterparts and by electronic signature, and each counterpart is an original.
+
+15.7 Headings are for convenience only and do not affect the interpretation of this Agreement.
+
+IN WITNESS WHEREOF, the Parties have signed this Agreement as of the Effective Date.
+
+BRACKENFOLD PROVISIONING LLC
+By: Odile Verrant-Masefield
+Title: Director of Vendor Operations
+
+CONSULTANT
+Tamsin Oyelaran-Pike

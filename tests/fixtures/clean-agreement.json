@@ -1,0 +1,45 @@
+{
+  "document": "clean-agreement.txt",
+  "summary": "This is a freelance agreement between Larkspur and Veil Studio LLC and Oswin Quarrie for a website redesign and content migration. Freelancer is paid a fixed fee of $9,600 in three instalments (40% on signing, 30% when the design milestone is accepted, 30% when the final Deliverable is accepted), and Client pays each invoice within 15 days. The agreement ends when the final Deliverable is accepted and paid for, and it does not renew on its own. Either Party can end it for any reason on 30 days' written notice, and Client pays for work done up to that date. Client owns each Deliverable once it has paid for it, while Freelancer keeps the tools and materials Freelancer already had and licenses them to Client for use in the Deliverables. Freelancer may show launched work in a portfolio and is free to work for other clients, including in Client's industry. Each Party indemnifies the other only for claims arising from its own breach, and each Party's total liability is capped at the total fees. Oregon law governs, and either Party can go to the Oregon courts with a jury trial.",
+  "plantedClauses": [],
+  "redLineCases": [
+    {
+      "redLine": "The client can end the contract early",
+      "matchingSentence": "Either Party may terminate this Agreement for any reason by giving the other Party thirty (30) days' written notice.",
+      "clearsDangerousBar": false
+    },
+    {
+      "redLine": "Any clause that gives the client ownership of my work",
+      "matchingSentence": "When Client has paid the fee for a Deliverable in full, Freelancer assigns to Client all copyright and other intellectual property rights in that Deliverable, excluding any Pre-Existing Materials incorporated in it.",
+      "clearsDangerousBar": false
+    }
+  ],
+  "questions": {
+    "supported": [
+      {
+        "question": "How much am I being paid for the project?",
+        "answer": "A fixed fee of $9,600, which changes only if both Parties sign a change order.",
+        "supportingSentence": "Client shall pay Freelancer a fixed fee of nine thousand six hundred dollars ($9,600) for the Project, which will not change unless both Parties sign a change order under Section 2.5."
+      },
+      {
+        "question": "Can I put this work in my portfolio?",
+        "answer": "Yes, once Client has launched the Deliverables publicly, unless Client asks in writing that a particular Deliverable be left out.",
+        "supportingSentence": "Freelancer may display the Deliverables in Freelancer's portfolio after Client has launched them publicly, unless Client asks in writing that a particular Deliverable be left out."
+      },
+      {
+        "question": "How quickly does the client have to pay an invoice?",
+        "answer": "Within 15 days after receiving it.",
+        "supportingSentence": "Client shall pay each invoice within fifteen (15) days after receiving it."
+      },
+      {
+        "question": "Am I allowed to work for other companies in the same industry?",
+        "answer": "Yes, during and after the agreement.",
+        "supportingSentence": "Freelancer is an independent contractor and is free to work for other clients, including clients in the same industry as Client, during and after this Agreement."
+      }
+    ],
+    "unsupported": [
+      { "question": "Does the client provide health insurance?" },
+      { "question": "Who owns the domain name for the new website?" }
+    ]
+  }
+}

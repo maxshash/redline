@@ -1,0 +1,124 @@
+{
+  "document": "adhesion-contract.txt",
+  "summary": "This is Brackenfold Provisioning LLC's standard consulting agreement with Tamsin Oyelaran-Pike, and the form says Client does not negotiate its terms. It runs for twelve months and renews automatically for further twelve-month terms unless Consultant sends notice of non-renewal between 45 and 30 days before the term ends. Client can end the agreement at any time without prior notice and does not have to pay for Services it has not accepted. Consultant can end it only if Client materially breaches and fails to fix the breach within 60 days. Consultant is paid $110 an hour, invoices monthly, and is paid within 45 days of Client receiving an invoice, less a 4% vendor administration fee that Client may raise by up to two percentage points each year. Consultant assigns to Client all Work Product and also all tools, templates, methods and other materials Consultant developed or owned before or during the Term. Consultant indemnifies Client for any claims relating to the Services or the Agreement without a limit on amount, while Client's liability to Consultant is capped at the lesser of three months of fees or $2,000. For 24 months after the Term, Consultant may not work for or accept work from Client's customers or prospective customers. Disputes go to binding arbitration before an arbitrator Client selects, and Consultant waives jury trials and class actions. Delaware law governs.",
+  "plantedClauses": [
+    {
+      "id": "auto-renewal",
+      "type": "auto-renewal",
+      "sentence": "This Agreement shall automatically renew for successive twelve (12) month renewal terms unless Consultant delivers written notice of non-renewal to Client no earlier than forty-five (45) days and no later than thirty (30) days before the end of the then-current term, and any notice delivered outside that window shall have no effect.",
+      "expectedSeverity": "critical",
+      "axis": "both",
+      "rationale": "Both axes: the renewal sits in a routine term section and only a notice sent in a fifteen-day window stops it, so it is easy to miss; once that window passes, the agreement renews for another twelve months, which is hard to undo.",
+      "counterOffer": "This Agreement ends at the close of the Initial Term unless both Parties agree in writing to renew it, and either Party may decline to renew by written notice at any time before the end of the then-current term."
+    },
+    {
+      "id": "unilateral-termination",
+      "type": "unilateral-termination",
+      "sentence": "Client may terminate this Agreement or any Statement of Work at any time, for any reason or for no reason, effective immediately and without prior notice to Consultant, and Client shall have no obligation to pay for any Services that Client has not accepted as of the date of termination.",
+      "expectedSeverity": "critical",
+      "axis": "both",
+      "rationale": "Both axes: it reads like standard termination wording, so it is easy to miss, and it lets Client end the work immediately without prior notice and without paying for Services not yet accepted, which is hard to undo.",
+      "counterOffer": "Either Party may terminate this Agreement or any Statement of Work for convenience on thirty (30) days' written notice, and Client shall pay Consultant for all Services performed and approved expenses incurred through the effective date of termination."
+    },
+    {
+      "id": "broad-ip-assignment",
+      "type": "ip-assignment",
+      "sentence": "Consultant hereby irrevocably assigns to Client all right, title and interest in and to all Work Product, together with all inventions, software, tools, templates, methods, know-how and other materials that Consultant conceived, developed or owned before or during the Term, whether or not created in connection with the Services or with the use of Client resources.",
+      "expectedSeverity": "serious",
+      "axis": "hard-to-undo",
+      "rationale": "Hard to undo: the assignment is irrevocable and reaches tools, templates and methods Consultant owned before the Term or made outside the Services. It sits under a clearly labeled ownership heading, so it is less easy to miss.",
+      "counterOffer": "Upon Client's payment in full for the applicable Statement of Work, Consultant assigns to Client all right, title and interest in the Work Product delivered under that Statement of Work, and Consultant retains ownership of all tools, templates, methods and materials Consultant owned before the Effective Date or developed outside the Services, granting Client a non-exclusive, perpetual license to use any of them incorporated in the Work Product."
+    },
+    {
+      "id": "uncapped-indemnity",
+      "type": "uncapped-indemnity",
+      "sentence": "Consultant shall defend, indemnify and hold harmless Client and its affiliates, officers, employees and agents from and against any and all claims, losses, damages, liabilities, judgments, fines, penalties, costs and expenses, including attorneys' fees, arising out of or relating in any way to the Services or this Agreement, without limit as to amount and regardless of whether caused in part by the negligence of Client.",
+      "expectedSeverity": "serious",
+      "axis": "hard-to-undo",
+      "rationale": "Hard to undo: Consultant covers any claim relating to the Services or the Agreement without a limit on amount, including claims caused in part by Client's negligence. It appears under an Indemnification heading, so it is less easy to miss.",
+      "counterOffer": "Each Party shall indemnify the other against third-party claims to the extent caused by its own breach of this Agreement or its own negligence, and each Party's total liability under this indemnity shall not exceed the fees paid or payable under this Agreement in the twelve (12) months before the claim arose."
+    },
+    {
+      "id": "non-compete-non-solicit",
+      "type": "non-compete-non-solicit",
+      "sentence": "During the Term and for twenty-four (24) months after it ends, Consultant shall not, directly or indirectly, provide services similar to the Services to any person or entity that was a customer or prospective customer of Client during the Term, nor solicit or accept work from any such person or entity.",
+      "expectedSeverity": "serious",
+      "axis": "hard-to-undo",
+      "rationale": "Hard to undo: for 24 months after the Term, Consultant may not work for or accept work from any of Client's customers or prospective customers. It is labeled as a restrictive covenant, so it is somewhat less easy to miss.",
+      "counterOffer": "During the Term and for six (6) months after it ends, Consultant shall not actively solicit Client's customers that Consultant worked with directly under a Statement of Work, and nothing in this Agreement prevents Consultant from accepting work from any person or entity that approaches Consultant."
+    },
+    {
+      "id": "arbitration-class-waiver",
+      "type": "arbitration-class-waiver",
+      "sentence": "Any dispute arising out of or relating to this Agreement that is not resolved under Section 13.1 shall be resolved exclusively by final and binding arbitration held in Marrowgate, Delaware before a single arbitrator selected by Client, and Consultant waives any right to a jury trial and any right to bring or participate in any class, collective or representative action against Client.",
+      "expectedSeverity": "worth-noting",
+      "axis": "neither",
+      "rationale": "Neither axis stands out: it is under a labeled dispute resolution heading, and it changes where and how a dispute is heard rather than creating a cost on its own. It still shifts leverage to Client, since Client selects the arbitrator and Consultant gives up jury trials and class actions.",
+      "counterOffer": "Any dispute arising out of or relating to this Agreement that is not resolved under Section 13.1 may be brought by either Party in the state or federal courts located in the county where the defendant resides, and neither Party waives its right to a jury trial."
+    },
+    {
+      "id": "fee-escalator",
+      "type": "escalator-or-liability-cap",
+      "sentence": "Client shall deduct a vendor administration fee of four percent (4%) of each invoice amount from every payment to Consultant, and Client may increase this percentage by up to two (2) percentage points on each anniversary of the Effective Date by written notice to Consultant.",
+      "expectedSeverity": "worth-noting",
+      "axis": "neither",
+      "rationale": "Neither axis stands out: the deduction is stated in the payment section and Client must give written notice before raising it. It still moves cost onto Consultant, since Client alone decides whether the fee goes up each year.",
+      "counterOffer": "Client shall pay each invoice in full without deduction, and any administration fee must be agreed in a Statement of Work signed by both Parties."
+    },
+    {
+      "id": "liability-cap",
+      "type": "escalator-or-liability-cap",
+      "sentence": "In no event shall Client's total liability to Consultant under or in connection with this Agreement exceed the lesser of the fees paid to Consultant in the three (3) months before the claim arose or two thousand dollars ($2,000).",
+      "expectedSeverity": "worth-noting",
+      "axis": "neither",
+      "rationale": "Neither axis stands out: it sits under a Limitation of Liability heading and limits recovery rather than creating a new obligation. It is one-sided, since it caps only Client's liability to Consultant, at no more than $2,000.",
+      "counterOffer": "Except for amounts owed for Services performed, each Party's total liability to the other under this Agreement shall not exceed the fees paid or payable under this Agreement in the twelve (12) months before the claim arose."
+    }
+  ],
+  "redLineCases": [
+    {
+      "redLine": "Payment later than 30 days after I invoice",
+      "matchingSentence": "Client shall pay each undisputed invoice within forty-five (45) days after Client receives it.",
+      "clearsDangerousBar": false
+    },
+    {
+      "redLine": "Having to log my hours in the client's own software",
+      "matchingSentence": "Consultant shall record time spent on the Services in Client's designated time-tracking system at least once per week.",
+      "clearsDangerousBar": false
+    },
+    {
+      "redLine": "Anything that stops me working with other clients",
+      "matchingSentence": "During the Term and for twenty-four (24) months after it ends, Consultant shall not, directly or indirectly, provide services similar to the Services to any person or entity that was a customer or prospective customer of Client during the Term, nor solicit or accept work from any such person or entity.",
+      "clearsDangerousBar": true
+    }
+  ],
+  "questions": {
+    "supported": [
+      {
+        "question": "What is my hourly rate?",
+        "answer": "$110 an hour, unless a Statement of Work sets a different rate or a fixed fee.",
+        "supportingSentence": "Client shall pay Consultant at the hourly rate of one hundred and ten dollars ($110) for Services performed, unless a Statement of Work sets a different rate or a fixed fee."
+      },
+      {
+        "question": "How long does the client have to pay an invoice?",
+        "answer": "Client pays each undisputed invoice within 45 days after it receives it.",
+        "supportingSentence": "Client shall pay each undisputed invoice within forty-five (45) days after Client receives it."
+      },
+      {
+        "question": "Which state's law applies to this agreement?",
+        "answer": "Delaware law governs the agreement.",
+        "supportingSentence": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules."
+      },
+      {
+        "question": "Does the client pay for travel?",
+        "answer": "Client reimburses reasonable travel expenses it approved in writing beforehand, if you submit receipts with the invoice.",
+        "supportingSentence": "Client shall reimburse reasonable travel expenses that Client has approved in writing before they are incurred, provided that Consultant submits receipts with the relevant invoice."
+      }
+    ],
+    "unsupported": [
+      { "question": "Does the client provide health insurance?" },
+      { "question": "Am I paid if I take sick leave?" },
+      { "question": "Will the client give me a reference or testimonial when the work ends?" }
+    ]
+  }
+}

@@ -1,0 +1,158 @@
+FREELANCE SERVICES AGREEMENT
+
+This Freelance Services Agreement (the "Agreement") is made on June 8, 2026 (the "Effective Date") between Larkspur and Veil Studio LLC, an Oregon limited liability company with its office at 18 Ambrose Wharf, Unit 4, Coldharbour Point, Oregon 97998 ("Client"), and Oswin Quarrie, an individual residing at 205 Tennick Road, Fellmoor, Washington 98999 ("Freelancer"). Client and Freelancer are each a "Party" and together the "Parties".
+
+1. DEFINITIONS
+
+1.1 "Project" means the website redesign and content migration described in Schedule A.
+
+1.2 "Deliverables" means the specific items listed in Schedule A that Freelancer creates for Client under this Agreement.
+
+1.3 "Pre-Existing Materials" means any code, libraries, templates, design systems, tools, methods and know-how that Freelancer owned or developed before the Effective Date or develops independently of the Project.
+
+1.4 "Confidential Information" means non-public information that one Party discloses to the other in connection with the Project and that is marked as confidential or would reasonably be understood to be confidential.
+
+2. SCOPE OF WORK
+
+2.1 Freelancer shall perform the Project and provide the Deliverables described in Schedule A with reasonable skill and care.
+
+2.2 Freelancer controls how, when and where the work is performed, provided that Freelancer meets the milestones in Schedule A.
+
+2.3 Client shall provide the content, brand assets, system access and timely feedback that Freelancer reasonably needs to complete the Project.
+
+2.4 If Client's delay in providing materials or feedback causes a milestone to slip, the affected milestone and every later milestone move back by the length of the delay.
+
+2.5 Either Party may propose a change to the scope of the Project, and a change takes effect only when both Parties sign a written change order that states any adjustment to the fee and schedule.
+
+3. TERM
+
+3.1 This Agreement starts on the Effective Date and ends when Client has accepted the final Deliverable and paid all amounts due, unless it is terminated earlier under Section 4.
+
+3.2 The Parties may extend this Agreement or agree to further work only by a new written agreement signed by both Parties.
+
+4. TERMINATION
+
+4.1 Either Party may terminate this Agreement for any reason by giving the other Party thirty (30) days' written notice.
+
+4.2 Either Party may terminate this Agreement on written notice if the other Party materially breaches it and does not cure the breach within fifteen (15) days after receiving written notice describing the breach.
+
+4.3 If this Agreement is terminated for any reason, Client shall pay Freelancer for all work performed up to the effective date of termination, calculated in proportion to the milestones completed or in progress.
+
+4.4 On termination, Freelancer shall deliver to Client all Deliverables completed or in progress for which Client has paid, and each Party shall return or destroy the other Party's Confidential Information.
+
+5. FEES AND PAYMENT
+
+5.1 Client shall pay Freelancer a fixed fee of nine thousand six hundred dollars ($9,600) for the Project, which will not change unless both Parties sign a change order under Section 2.5.
+
+5.2 Freelancer shall invoice forty percent (40%) of the fixed fee on signing, thirty percent (30%) on acceptance of the design milestone and thirty percent (30%) on acceptance of the final Deliverable.
+
+5.3 Client shall pay each invoice within fifteen (15) days after receiving it.
+
+5.4 If Client disputes an invoice in good faith, Client shall tell Freelancer in writing within seven (7) days after receiving it, explaining the reason, and the Parties shall work together promptly to resolve the dispute.
+
+5.5 Client shall reimburse Freelancer for the cost of stock images, fonts and third-party licenses purchased for the Project with Client's prior written approval.
+
+5.6 Each Party is responsible for its own taxes arising from this Agreement.
+
+6. ACCEPTANCE
+
+6.1 Client shall review each Deliverable within ten (10) business days after Freelancer submits it and shall either accept it or give Freelancer a written list of the specific ways it does not meet Schedule A.
+
+6.2 Freelancer shall correct any listed nonconformity and resubmit the Deliverable, and the review process in Section 6.1 applies again to the resubmitted Deliverable.
+
+6.3 A Deliverable is treated as accepted if Client does not respond within the review period or if Client uses it in production.
+
+7. INTELLECTUAL PROPERTY
+
+7.1 When Client has paid the fee for a Deliverable in full, Freelancer assigns to Client all copyright and other intellectual property rights in that Deliverable, excluding any Pre-Existing Materials incorporated in it.
+
+7.2 Freelancer keeps all rights in the Pre-Existing Materials and grants Client a non-exclusive, perpetual, royalty-free license to use any Pre-Existing Materials incorporated in the Deliverables as part of those Deliverables.
+
+7.3 Freelancer may display the Deliverables in Freelancer's portfolio after Client has launched them publicly, unless Client asks in writing that a particular Deliverable be left out.
+
+7.4 Client's content, logos and brand assets remain Client's property, and Client grants Freelancer a limited license to use them only to perform the Project.
+
+8. CONFIDENTIALITY
+
+8.1 Each Party shall keep the other Party's Confidential Information confidential and use it only for the Project.
+
+8.2 Confidential Information does not include information that is or becomes public without breach of this Agreement, that the receiving Party already knew without restriction, that the receiving Party develops independently, or that the receiving Party lawfully receives from a third party.
+
+8.3 A Party may disclose Confidential Information where required by law, after giving the other Party prompt notice where the law permits.
+
+8.4 The obligations in this Section 8 last for two (2) years after this Agreement ends.
+
+9. WARRANTIES
+
+9.1 Each Party warrants that it has the authority to enter into this Agreement.
+
+9.2 Freelancer warrants that, to Freelancer's knowledge, the Deliverables will not infringe any third party's intellectual property rights, excluding any materials that Client supplied.
+
+9.3 Client warrants that it has the rights needed to let Freelancer use the content and brand assets that Client supplies for the Project.
+
+10. INDEMNITY AND LIABILITY
+
+10.1 Each Party shall indemnify the other Party against third-party claims to the extent those claims arise from the indemnifying Party's own breach of this Agreement.
+
+10.2 A Party seeking indemnity shall notify the other Party promptly of the claim, allow the other Party to control the defense, and cooperate reasonably at the other Party's expense.
+
+10.3 Each Party's total liability to the other under or in connection with this Agreement, including under Section 10.1, shall not exceed the total fees payable under this Agreement.
+
+10.4 Neither Party is liable to the other for lost profits or indirect or consequential losses arising from this Agreement.
+
+10.5 Neither Party is responsible for a delay caused by events outside its reasonable control, as long as it tells the other Party promptly and resumes performance as soon as it reasonably can.
+
+11. RELATIONSHIP OF THE PARTIES
+
+11.1 Freelancer is an independent contractor and is free to work for other clients, including clients in the same industry as Client, during and after this Agreement.
+
+11.2 Nothing in this Agreement makes either Party the employee, partner, agent or joint venturer of the other.
+
+11.3 Freelancer may engage a subcontractor for part of the Project with Client's written consent, which Client shall not unreasonably withhold, and Freelancer remains responsible for the subcontractor's work.
+
+12. DISPUTES AND GOVERNING LAW
+
+12.1 The Parties shall try in good faith to settle any dispute by talking to each other for at least ten (10) business days before starting legal proceedings.
+
+12.2 This Agreement is governed by the laws of the State of Oregon.
+
+12.3 Either Party may bring a claim arising out of this Agreement in the state or federal courts located in Oregon, and each Party keeps its right to a jury trial.
+
+12.4 Either Party may choose to use a mediator agreed by both Parties, with the mediator's fees shared equally, but neither Party is required to mediate before going to court.
+
+13. NOTICES
+
+13.1 Notices under this Agreement must be in writing and sent by email or by post to the addresses at the start of this Agreement, or to a new address that a Party gives by notice.
+
+13.2 An emailed notice is received on the next business day after it is sent, and a posted notice is received three (3) business days after posting.
+
+14. GENERAL
+
+14.1 Neither Party may assign this Agreement without the other Party's written consent, which shall not be unreasonably withheld.
+
+14.2 This Agreement, including Schedule A, is the entire agreement between the Parties about the Project and replaces any earlier discussions about it.
+
+14.3 Any amendment to this Agreement must be in writing and signed by both Parties.
+
+14.4 If a court finds any part of this Agreement unenforceable, the rest of the Agreement remains in effect.
+
+14.5 A Party that does not enforce a right under this Agreement has not waived that right.
+
+14.6 This Agreement may be signed electronically and in counterparts.
+
+SCHEDULE A: PROJECT DESCRIPTION
+
+A.1 Deliverables: a design system of up to thirty (30) components, page designs for up to twelve (12) page templates, a responsive front-end build of those templates, and migration of up to two hundred (200) existing articles into the new content system.
+
+A.2 Milestones: design milestone within five (5) weeks after the Effective Date, front-end build within ten (10) weeks after the Effective Date, and content migration within twelve (12) weeks after the Effective Date.
+
+A.3 Revisions: the fixed fee includes two (2) rounds of revisions on the page designs, and further rounds are subject to a change order under Section 2.5.
+
+SIGNED by the Parties on the Effective Date.
+
+LARKSPUR AND VEIL STUDIO LLC
+By: Perpetua Hollins-Drave
+Title: Managing Member
+
+FREELANCER
+Oswin Quarrie

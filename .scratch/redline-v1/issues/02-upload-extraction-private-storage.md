@@ -4,11 +4,11 @@
 
 **Blocked by:** 01 (Scaffold: Next.js app with Supabase auth)
 
-**Status:** ready-for-agent
+**Status:** done (RLS proven against the migration SQL in PGlite; not yet run on a hosted Supabase project; see BUILD-REPORT.md)
 
-- [ ] A user can upload a document (contract/lease/freelance agreement/ToS) and see text extraction happen client-side.
-- [ ] Only the extracted text is sent to and stored in Supabase — the original file is never uploaded to the server or persisted anywhere.
-- [ ] The uploaded document appears in the uploading user's library immediately after upload.
-- [ ] Row-level security (or equivalent) enforced at the database/API layer so a document is only readable by its uploader.
-- [ ] Negative test: an authenticated user B cannot read user A's document via a direct API/DB call, not just "no UI link to it."
-- [ ] No OCR path exists; a scanned/image-only file either fails extraction gracefully or is rejected, with no silent mangled-text result.
+- [x] A user can upload a document (contract/lease/freelance agreement/ToS) and see text extraction happen client-side.
+- [x] Only the extracted text is sent to and stored in Supabase — the original file is never uploaded to the server or persisted anywhere.
+- [x] (library list built; live save round trip unverified without Supabase) The uploaded document appears in the uploading user's library immediately after upload.
+- [x] Row-level security (or equivalent) enforced at the database/API layer so a document is only readable by its uploader.
+- [x] Negative test: an authenticated user B cannot read user A's document via a direct API/DB call, not just "no UI link to it."
+- [x] No OCR path exists; a scanned/image-only file either fails extraction gracefully or is rejected, with no silent mangled-text result.

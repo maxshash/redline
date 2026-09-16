@@ -151,7 +151,7 @@ export function ContractFacts() {
             {SUMMARY}
           </p>
           <Link
-            href="/sign-up"
+            href="/analyze"
             className="mt-4 inline-block border-[3px] border-ink bg-carton px-6 py-3 text-[0.9375rem] font-extrabold uppercase tracking-[0.08em] text-carton-ink transition-colors hover:bg-ink hover:text-panel-field"
           >
             Try it on a document

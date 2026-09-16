@@ -4,7 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 /** Screens that exist today. Later tickets add theirs here. */
-const SCREENS = [{ href: "/library", label: "Library" }] as const;
+const SCREENS = [
+  { href: "/library", label: "Library" },
+  { href: "/analyze", label: "Check a document" },
+] as const;
 
 export function ShellNav() {
   const pathname = usePathname();

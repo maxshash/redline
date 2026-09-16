@@ -237,7 +237,7 @@ export default function Home() {
             the same defaults.
           </p>
           <Link
-            href="/sign-up"
+            href="/analyze"
             className="border-[3px] border-carton-ink bg-carton-ink px-7 py-3.5 text-[0.9375rem] font-extrabold uppercase tracking-[0.08em] text-carton-deep transition-colors hover:bg-carton-deep hover:text-carton-ink"
           >
             Try it on a document

@@ -4,6 +4,9 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { getSignedInUser } from "@/lib/supabase/server";
 import { AnalyzeWorkspace, type Keeping } from "./_components/analyze-workspace";
 
+/** Analysis runs in a server action on this page, and a model call can take a while. */
+export const maxDuration = 120;
+
 export const metadata: Metadata = {
   title: "Redline: check a document",
 };

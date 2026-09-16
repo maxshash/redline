@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { analyzeDocumentText } from "@/app/_actions/analysis";
+import { ANALYSIS_COPY } from "@/lib/analysis/copy";
+import { DocumentFacts, type AnalysisRun } from "./document-facts";
 import { DocumentIntake } from "./document-intake";
 import { KeepDocument } from "./keep-document";
-import { SourceText } from "./source-text";
+import { SourceText, type Selection } from "./source-text";
 
 /** Whether this visitor can keep documents, decided on the server. */
 export type Keeping = "signed-in" | "signed-out" | "unavailable";
@@ -27,17 +30,43 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
   const [document, setDocument] = useState<DocumentInHand | null>(null);
   // Bumped for each new document so per-document state (like "saved") resets.
   const [documentNumber, setDocumentNumber] = useState(0);
+  const [run, setRun] = useState<AnalysisRun>({ status: "idle" });
+  const [selection, setSelection] = useState<Selection | null>(null);
+  // The document an in-flight analysis belongs to. A result for a document
+  // that has since been replaced is dropped.
+  const current = useRef(0);
+
+  function replaceDocument(next: DocumentInHand | null) {
+    current.current += 1;
+    setDocument(next);
+    setDocumentNumber((n) => n + 1);
+    setRun({ status: "idle" });
+    setSelection(null);
+  }
+
+  async function startAnalysis(text: string) {
+    const id = current.current;
+    setRun({ status: "running" });
+    setSelection(null);
+    let next: AnalysisRun;
+    try {
+      const state = await analyzeDocumentText({ text });
+      next =
+        state.status === "analyzed"
+          ? { status: "done", analysis: state.analysis }
+          : { status: "failed", message: state.message };
+    } catch {
+      next = { status: "failed", message: ANALYSIS_COPY.modelFailed };
+    }
+    if (id === current.current) setRun(next);
+  }
 
   if (!document) {
-    return (
-      <DocumentIntake
-        onDocument={(next) => {
-          setDocument(next);
-          setDocumentNumber((n) => n + 1);
-        }}
-      />
-    );
+    return <DocumentIntake onDocument={replaceDocument} />;
   }
+
+  const flags = run.status === "done" ? run.analysis.flags : [];
+  const select = (index: number) => setSelection((previous) => ({ index, request: (previous?.request ?? 0) + 1 }));
 
   const origin = document.source.kind === "file" ? `From ${document.source.name}` : "Pasted text";
 
@@ -56,13 +85,22 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
             </p>
             <button
               type="button"
-              onClick={() => setDocument(null)}
+              onClick={() => replaceDocument(null)}
               className="text-[0.9375rem] font-bold text-ink underline decoration-1 underline-offset-[3px] hover:decoration-[3px]"
             >
               Use a different document
             </button>
           </div>
         </header>
+
+        <DocumentFacts
+          run={run}
+          onStart={() => void startAnalysis(document.text)}
+          activeIndex={selection?.index ?? null}
+          onSelect={select}
+        />
+
+        <div className="barline-thin" />
 
         <KeepDocument
           key={documentNumber}
@@ -72,7 +110,13 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
         />
       </section>
 
-      <SourceText text={document.text} className="lg:sticky lg:top-5 lg:col-span-5" />
+      <SourceText
+        text={document.text}
+        flags={flags}
+        selection={selection}
+        onSelect={select}
+        className="lg:sticky lg:top-5 lg:col-span-5"
+      />
     </div>
   );
 }

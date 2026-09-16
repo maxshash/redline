@@ -1,55 +1,66 @@
 @import "tailwindcss";
 
 @theme {
-  --font-typewriter: var(--font-typewriter);
-  --font-document: var(--font-document);
+  --font-panel: var(--font-panel);
+  --font-panel-narrow: var(--font-panel-narrow);
+  --font-source: var(--font-source);
+  --font-overprint: var(--font-overprint);
 
-  --color-paper: #f2ede2;
-  --color-paper-dim: #e9e2d2;
-  --color-paper-shadow: #d8cfb8;
-  --color-ink: #1d1b18;
-  --color-ink-soft: #4a453c;
-  --color-ink-faint: #8a8371;
-  --color-rule: #c9bfa6;
-  --color-critical: #a6291f;
-  --color-critical-ink: #f2ede2;
-  --color-serious: #8a5a1c;
-  --color-serious-ink: #f2ede2;
-  --color-noting: #55503f;
-  --color-stamp-fade: #b23a2b;
+  /* The carton: a flat pharmacy spot green the panel is printed onto. */
+  --color-carton: #0b5340;
+  --color-carton-deep: #07382c;
+  --color-carton-ink: #f0f4f1;
+  --color-carton-ink-soft: #9dbfae;
+
+  /* The panel: uncoated printed white, black ink. */
+  --color-panel-field: #fbfaf7;
+  --color-panel-field-hover: #f6f4ee;
+  --color-panel-field-active: #f1eee6;
+  --color-ink: #141210;
+  --color-ink-soft: #4d4842;
+
+  /* Rationed to Critical alone. No second or third tier colour exists. */
+  --color-critical: #bb1226;
+  --color-critical-mark: #fae3e6;
+
+  /* A red-line match is a separate signal, never a severity device. */
+  --color-overprint: #1f3fa8;
+  --color-overprint-mark: #dfe4f7;
 }
 
 @layer base {
-  * {
-    border-color: var(--color-rule);
-  }
-
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    font-family: var(--font-document), ui-serif, serif;
+    font-family: var(--font-panel), ui-sans-serif, system-ui, sans-serif;
   }
 
+  /* Browser surfaces belong to the design system too. */
   ::selection {
     background: var(--color-critical);
-    color: var(--color-critical-ink);
+    color: var(--color-panel-field);
+  }
+
+  ::-moz-selection {
+    background: var(--color-critical);
+    color: var(--color-panel-field);
   }
 
   ::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+    width: 13px;
+    height: 13px;
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--color-paper-dim);
+    background: var(--color-carton-deep);
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: var(--color-ink-faint);
+    background-color: var(--color-carton-ink-soft);
+    border: 4px solid var(--color-carton-deep);
     border-radius: 0;
-    border: 3px solid var(--color-paper-dim);
   }
 
   :focus-visible {
@@ -57,38 +68,149 @@
     outline-offset: 3px;
   }
 
-  ::-moz-selection {
-    background: var(--color-critical);
-    color: var(--color-critical-ink);
+  /* Nothing in this world has a corner radius. */
+  * {
+    border-radius: 0;
   }
 }
 
 @layer utilities {
-  .stamp-enter {
-    animation: stamp-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  /*
+   * Severity is rule weight, not a palette.
+   * Critical is the only tier that carries colour.
+   *
+   * The black-box device: a boxed warning is the heaviest field in the system
+   * by definition, so its rule is uniformly heavier than the 3px every
+   * ordinary panel border uses. Uniform, never a thick left edge — a colored
+   * side bar is a callout costume, not a box rule.
+   */
+  .rule-critical {
+    border: 6px solid var(--color-critical);
   }
 
-  @keyframes stamp-in {
-    0% {
-      opacity: 0;
-      transform: scale(1.6) rotate(-6deg);
-      filter: blur(1px);
+  .rule-serious {
+    border-top: 3px solid var(--color-ink);
+  }
+
+  .rule-noted {
+    border-top: 1px solid var(--color-ink);
+  }
+
+  /*
+   * Not a severity rule. A red-line match with no tier gets the overprint's
+   * own dashed rule, so it borrows nothing from the severity system.
+   */
+  .rule-redline {
+    border-top: 2px dashed var(--color-overprint);
+  }
+
+  /*
+   * The red-line overprint on a quoted run. A second underline in the
+   * overprint's own ink, carried on an inner span so it is independent of the
+   * tier's underline on the parent: both draw, at different offsets, and each
+   * stops exactly at its own text.
+   *
+   * It is a text decoration rather than a painted background because a
+   * background sizes to the inline box, so on the last wrapped line the rule
+   * overran the sentence and kept going across the panel. On a page whose
+   * whole claim is that a mark names one exact sentence, a rule that extends
+   * past that sentence is the defect, not a cosmetic detail.
+   */
+  .mark-redline {
+    text-decoration-line: underline;
+    text-decoration-style: dashed;
+    text-decoration-color: var(--color-overprint);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 7px;
+  }
+
+  /* The mandated barline under a panel heading. */
+  .barline {
+    border-bottom: 7px solid var(--color-ink);
+  }
+
+  .barline-thin {
+    border-bottom: 3px solid var(--color-ink);
+  }
+
+  .hairline {
+    border-bottom: 1px solid var(--color-ink);
+  }
+
+  /* Applied after printing: slightly rotated, slightly off-register. */
+  .overprint-stamp {
+    font-family: var(--font-overprint), ui-monospace, monospace;
+    color: var(--color-overprint);
+    transform: rotate(-1.2deg);
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /*
+   * "The panel prints" — one authored entrance.
+   * Barlines sweep left to right, blocks set heaviest-first, the lot code
+   * stamps last. Text never animates from invisible: only the rules wipe and
+   * the stamp lands, so content is readable whether or not the animation runs.
+   */
+  .print-bar {
+    animation: print-bar 440ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--print-delay, 0ms);
+    transform-origin: left center;
+  }
+
+  .print-set {
+    animation: print-set 540ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--print-delay, 0ms);
+  }
+
+  .print-stamp {
+    animation: print-stamp 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--print-delay, 0ms);
+  }
+
+  @keyframes print-bar {
+    from {
+      transform: scaleX(0);
     }
-    60% {
-      opacity: 1;
+    to {
+      transform: scaleX(1);
     }
-    100% {
-      opacity: 1;
-      transform: scale(1) rotate(var(--stamp-tilt, -2deg));
+  }
+
+  /* Ink settling onto stock: visible throughout, never faded out. */
+  @keyframes print-set {
+    from {
+      transform: translateY(7px);
+      filter: blur(2.5px);
+    }
+    to {
+      transform: translateY(0);
       filter: blur(0);
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .stamp-enter {
-      animation: none;
+  @keyframes print-stamp {
+    from {
+      opacity: 0;
+      transform: rotate(-1.2deg) scale(1.3);
+    }
+    to {
       opacity: 1;
-      transform: rotate(var(--stamp-tilt, -2deg));
+      transform: rotate(-1.2deg) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .print-bar,
+    .print-set,
+    .print-stamp {
+      animation: none;
+    }
+
+    html {
+      scroll-behavior: auto;
     }
   }
 }

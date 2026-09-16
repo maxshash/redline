@@ -1,69 +1,328 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-11T00:00:00Z",
+  "generatedAt": "2026-09-14T00:00:00Z",
   "title": "Design System: Redline",
   "extensions": {
     "colorMeta": {
-      "critical": {
+      "carton": {
         "role": "primary",
-        "displayName": "Verdict Red",
-        "canonical": "#a6291f",
-        "tonalRamp": ["#3a0e0a", "#571712", "#7a201a", "#a6291f", "#c14b3f", "#d97e70", "#eab3a8", "#f6ddd6"]
+        "displayName": "Carton Green",
+        "canonical": "#0b5340",
+        "tonalRamp": [
+          "#041f18",
+          "#07382c",
+          "#0b5340",
+          "#0f6e55",
+          "#17906f",
+          "#3fb691",
+          "#7fd4b8",
+          "#cdeee1"
+        ]
       },
-      "serious": {
+      "carton-deep": {
+        "role": "primary",
+        "displayName": "Carton Green Deep",
+        "canonical": "#07382c",
+        "tonalRamp": [
+          "#021610",
+          "#04261e",
+          "#07382c",
+          "#0a4b3b",
+          "#0e6650",
+          "#16886b",
+          "#52c39d",
+          "#bfe9d9"
+        ]
+      },
+      "critical": {
         "role": "secondary",
-        "displayName": "Ochre Serious",
-        "canonical": "#8a5a1c",
-        "tonalRamp": ["#2e1e09", "#452c0d", "#634013", "#8a5a1c", "#a8783c", "#c39c66", "#dcc194", "#efe1c9"]
+        "displayName": "Warning Red",
+        "canonical": "#bb1226",
+        "tonalRamp": [
+          "#2d040a",
+          "#520712",
+          "#7d0c1c",
+          "#bb1226",
+          "#dc3247",
+          "#ea6f7e",
+          "#f3adb6",
+          "#fae3e6"
+        ]
       },
-      "noting": {
-        "role": "accent",
-        "displayName": "Worth-Noting Neutral",
-        "canonical": "#55503f",
-        "tonalRamp": ["#1c1a15", "#2a271f", "#3d392c", "#55503f", "#726c56", "#96906f", "#bab494", "#ddd9c2"]
+      "critical-mark": {
+        "role": "secondary",
+        "displayName": "Critical Mark",
+        "canonical": "#fae3e6",
+        "tonalRamp": [
+          "#3a1015",
+          "#5e1b22",
+          "#8c2c36",
+          "#bb4d58",
+          "#d67e86",
+          "#e9abb1",
+          "#f4cdd2",
+          "#fae3e6"
+        ]
       },
-      "ink-soft": {
+      "overprint": {
+        "role": "tertiary",
+        "displayName": "Overprint Blue",
+        "canonical": "#1f3fa8",
+        "tonalRamp": [
+          "#080f2a",
+          "#0f1f54",
+          "#172f7e",
+          "#1f3fa8",
+          "#3459cf",
+          "#6b86e1",
+          "#a3b5ee",
+          "#dfe4f7"
+        ]
+      },
+      "overprint-mark": {
+        "role": "tertiary",
+        "displayName": "Overprint Mark",
+        "canonical": "#dfe4f7",
+        "tonalRamp": [
+          "#141a33",
+          "#222c57",
+          "#33427e",
+          "#4a5da8",
+          "#7688c8",
+          "#a3b0de",
+          "#c6cfec",
+          "#dfe4f7"
+        ]
+      },
+      "panel-field": {
         "role": "neutral",
-        "displayName": "Ink Soft (Cleared)",
-        "canonical": "#4a453c",
-        "tonalRamp": ["#18160f", "#26221b", "#37322a", "#4a453c", "#65605432", "#867f6f", "#aca594", "#d2ccbc"]
+        "displayName": "Panel White",
+        "canonical": "#fbfaf7",
+        "tonalRamp": [
+          "#1c1a16",
+          "#3b372f",
+          "#5e594e",
+          "#867f71",
+          "#b0a99b",
+          "#d6d0c4",
+          "#efece4",
+          "#fbfaf7"
+        ]
+      },
+      "panel-field-hover": {
+        "role": "neutral",
+        "displayName": "Panel Hover",
+        "canonical": "#f6f4ee",
+        "tonalRamp": [
+          "#1b1a15",
+          "#38352d",
+          "#5a564b",
+          "#827c6e",
+          "#aca698",
+          "#d2ccc0",
+          "#ebe7de",
+          "#f6f4ee"
+        ]
+      },
+      "panel-field-active": {
+        "role": "neutral",
+        "displayName": "Panel Selected",
+        "canonical": "#f1eee6",
+        "tonalRamp": [
+          "#1a1813",
+          "#35322a",
+          "#565147",
+          "#7e7869",
+          "#a8a193",
+          "#cec8bb",
+          "#e6e2d9",
+          "#f1eee6"
+        ]
       },
       "ink": {
         "role": "neutral",
-        "displayName": "Typewriter Ink",
-        "canonical": "#1d1b18",
-        "tonalRamp": ["#0a0908", "#141210", "#1d1b18", "#332f29", "#4a453c", "#726c5e", "#a19a86", "#cfc8b4"]
+        "displayName": "Ink",
+        "canonical": "#141210",
+        "tonalRamp": [
+          "#0a0908",
+          "#141210",
+          "#2a2622",
+          "#4d4842",
+          "#736c63",
+          "#a09991",
+          "#cbc5bd",
+          "#eae6e0"
+        ]
       },
-      "paper": {
+      "ink-soft": {
         "role": "neutral",
-        "displayName": "Onion-Skin Paper",
-        "canonical": "#f2ede2",
-        "tonalRamp": ["#4a4436", "#655d4a", "#8a8067", "#b0a68a", "#d0c6a8", "#e9e2d2", "#f2ede2", "#faf8f2"]
+        "displayName": "Ink Soft",
+        "canonical": "#4d4842",
+        "tonalRamp": [
+          "#100f0d",
+          "#221f1c",
+          "#36322d",
+          "#4d4842",
+          "#6d675f",
+          "#948d84",
+          "#c0b9b0",
+          "#e5e0d9"
+        ]
       },
-      "paper-dim": {
+      "carton-ink": {
         "role": "neutral",
-        "displayName": "Paper Dim",
-        "canonical": "#e9e2d2",
-        "tonalRamp": ["#3f3a2c", "#59533f", "#7c745a", "#a0967a", "#c2b89c", "#dcd3bd", "#e9e2d2", "#f4efe4"]
+        "displayName": "Carton Ink",
+        "canonical": "#f0f4f1",
+        "tonalRamp": [
+          "#16201a",
+          "#28362d",
+          "#3c4f43",
+          "#5a705f",
+          "#849684",
+          "#b1c0b3",
+          "#d7e1d9",
+          "#f0f4f1"
+        ]
       },
-      "rule": {
+      "carton-ink-soft": {
         "role": "neutral",
-        "displayName": "Ledger Rule",
-        "canonical": "#c9bfa6",
-        "tonalRamp": ["#403a2b", "#5c5440", "#82785c", "#a89c7c", "#c9bfa6", "#dad2bf", "#e8e2d3", "#f4f0e6"]
+        "displayName": "Carton Ink Soft",
+        "canonical": "#9dbfae",
+        "tonalRamp": [
+          "#122019",
+          "#1e352a",
+          "#2d4f3d",
+          "#417055",
+          "#5f9475",
+          "#83b394",
+          "#9dbfae",
+          "#d2e4da"
+        ]
       }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display / Headline", "purpose": "The single H1 hero line and section headings; same serif family as body, distinguished by size and weight only." },
-      "quote": { "displayName": "Evidentiary Quote", "purpose": "The oversized italic verbatim clause sentence in the ClauseChart — the page's proof, not a caption." },
-      "body": { "displayName": "Body", "purpose": "All supporting prose, capped near 68ch." },
-      "label": { "displayName": "Label / Mono", "purpose": "Stamps, buttons, nav link, element numbering, and the ClauseChart's header/footer bands — always uppercase, always Courier Prime." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "The panel's own claim. Uppercase, held to a 20-26ch measure so it always breaks dense; pairs with display-sm at >=640px."
+      },
+      "display-sm": {
+        "displayName": "Display, sm step",
+        "purpose": "The >=640px step of Display (2.25rem). Same role, one size up."
+      },
+      "display-close": {
+        "displayName": "Display, carton statements",
+        "purpose": "Display at -0.02em tracking for the two headings set on the green ground: the citation beat steps to 2.25rem at >=640px, the closing heading to 2.375rem."
+      },
+      "display-close-sm": {
+        "displayName": "Display, closing step",
+        "purpose": "The >=640px step of the closing carton heading (2.375rem), the largest grotesque on the page."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Panel section titles sitting over the 7px barline; pairs with headline-sm at >=640px."
+      },
+      "headline-sm": {
+        "displayName": "Headline, sm step",
+        "purpose": "The >=640px step of Headline (2rem). The sign-up page uses it as its base and steps to 2.75rem."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "The Redline wordmark in a panel masthead. Nothing else."
+      },
+      "quote-critical": {
+        "displayName": "Quote, Critical",
+        "purpose": "The verbatim sentence inside a Critical boxed warning; pairs with quote-critical-sm at >=640px."
+      },
+      "quote-critical-sm": {
+        "displayName": "Quote, Critical sm step",
+        "purpose": "The >=640px step of the Critical quote (2.75rem at line-height 1.14): the largest type on the page."
+      },
+      "quote-serious": {
+        "displayName": "Quote, Serious",
+        "purpose": "Verbatim sentence in a Serious finding; pairs with quote-serious-sm at >=640px."
+      },
+      "quote-serious-sm": {
+        "displayName": "Quote, Serious sm step",
+        "purpose": "The >=640px step of the Serious quote (1.375rem)."
+      },
+      "quote-noted": {
+        "displayName": "Quote, Worth noting",
+        "purpose": "Verbatim sentence in a Worth-noting or tierless red-line finding; pairs with quote-noted-sm at >=640px."
+      },
+      "quote-noted-sm": {
+        "displayName": "Quote, Worth noting sm step",
+        "purpose": "The >=640px step of the Worth-noting quote (1.0625rem)."
+      },
+      "source": {
+        "displayName": "Source",
+        "purpose": "The agreement's running text in the document panel. Loose 1.7 leading makes room for underline marks without collision."
+      },
+      "body-lead": {
+        "displayName": "Body lead",
+        "purpose": "Running text set on the carton ground, 56-62ch."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text inside a panel, in Ink Soft, 62-68ch."
+      },
+      "body-small": {
+        "displayName": "Body small",
+        "purpose": "Finding rationale and multi-column explanation blocks, 48-52ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Panel sub-headings and every button label. Tier names use it at 800 weight."
+      },
+      "label-narrow": {
+        "displayName": "Label narrow",
+        "purpose": "Metadata rows: section references, counts, document names, footer."
+      },
+      "label-narrow-tight": {
+        "displayName": "Label narrow tight",
+        "purpose": "Clause numbers and headings inside the source document."
+      },
+      "overprint": {
+        "displayName": "Overprint",
+        "purpose": "Lot codes, document IDs, red-line stamps. Always rotated -1.2deg; 0.8125rem in the red-line list."
+      }
     },
+    "shadows": [],
     "motion": [
-      { "name": "stamp-in", "value": "520ms cubic-bezier(0.16, 1, 0.3, 1); scale 1.6→1, rotate -6deg→per-tier tilt, blur 1px→0, opacity 0→1 (60% keyframe reaches full opacity)", "purpose": "A stamp landing on paper when a verdict enters view; respects prefers-reduced-motion by skipping to the settled state." }
+      {
+        "name": "ease-print",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Exponential ease-out; the only easing in the system."
+      },
+      {
+        "name": "print-bar",
+        "value": "440ms",
+        "purpose": "Barlines sweep from scaleX(0) left to right. Panel barline at 120ms, secondary at 200ms."
+      },
+      {
+        "name": "print-set",
+        "value": "540ms",
+        "purpose": "Blocks set into place: translateY(7px)->0 and blur(2.5px)->0. Never opacity, so text is readable throughout. Finding blocks stagger heaviest-first from 280ms in 90ms steps."
+      },
+      {
+        "name": "print-stamp",
+        "value": "360ms",
+        "purpose": "The lot code lands last at a 760ms delay, rotate(-1.2deg) scale(1.3)->1."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation: none; scroll-behavior: auto",
+        "purpose": "All three entrance animations and smooth scrolling are disabled under prefers-reduced-motion."
+      }
     ],
     "breakpoints": [
-      { "name": "sm", "value": "640px" }
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
     ]
   },
   "components": [
@@ -71,68 +330,166 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "The single CTA style, 'Try it on a document' — filled ink, inverts on hover.",
+      "description": "The single action, printed inside a panel on carton-green stock.",
       "html": "<a class=\"ds-btn-primary\" href=\"#\">Try it on a document</a>",
-      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; background: #1d1b18; color: #f2ede2; border: 3px solid #1d1b18; padding: 14px 28px; font-family: 'Courier Prime', ui-monospace, monospace; font-size: 0.875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; border-radius: 0; transition: background-color 0.15s, color 0.15s; } .ds-btn-primary:hover { background: #f2ede2; color: #1d1b18; } .ds-btn-primary:focus-visible { outline: 2px solid #a6291f; outline-offset: 3px; }"
+      "css": ".ds-btn-primary { display: inline-block; background: var(--color-carton, #0b5340); color: var(--color-carton-ink, #f0f4f1); border: 3px solid var(--color-ink, #141210); border-radius: 0; padding: 0.75rem 1.5rem; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.9375rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; transition: background-color 0.15s, color 0.15s; } .ds-btn-primary:hover { background: var(--color-ink, #141210); color: var(--color-panel-field, #fbfaf7); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-critical, #bb1226); outline-offset: 3px; }"
     },
     {
-      "name": "Stamp — Critical",
-      "kind": "custom",
-      "refersTo": "stamp-critical",
-      "description": "The signature verdict badge, Critical tier: thin red border and text, no fill, stamp-in entrance animation.",
-      "html": "<span class=\"ds-stamp ds-stamp-critical\">Critical</span>",
-      "css": ".ds-stamp { display: inline-flex; align-items: center; gap: 6px; border-width: 3px; border-style: solid; padding: 4px 12px; font-family: 'Courier Prime', ui-monospace, monospace; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; border-radius: 0; background: transparent; animation: ds-stamp-in 520ms cubic-bezier(0.16,1,0.3,1) both; } .ds-stamp-critical { border-color: #a6291f; color: #a6291f; } @keyframes ds-stamp-in { 0% { opacity: 0; transform: scale(1.6) rotate(-6deg); filter: blur(1px); } 60% { opacity: 1; } 100% { opacity: 1; transform: scale(1) rotate(-3deg); filter: blur(0); } }"
+      "name": "Button on Carton",
+      "kind": "button",
+      "refersTo": "button-on-carton",
+      "description": "The closing call to action, set directly on the green ground.",
+      "html": "<a class=\"ds-btn-carton\" href=\"#\">Try it on a document</a>",
+      "css": ".ds-btn-carton { display: inline-block; background: var(--color-carton-ink, #f0f4f1); color: var(--color-carton-deep, #07382c); border: 3px solid var(--color-carton-ink, #f0f4f1); border-radius: 0; padding: 0.875rem 1.75rem; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.9375rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; transition: background-color 0.15s, color 0.15s; } .ds-btn-carton:hover { background: var(--color-carton-deep, #07382c); color: var(--color-carton-ink, #f0f4f1); } .ds-btn-carton:focus-visible { outline: 2px solid var(--color-critical, #bb1226); outline-offset: 3px; }"
     },
     {
-      "name": "Stamp — Cleared",
-      "kind": "custom",
-      "refersTo": "stamp-cleared",
-      "description": "The verdict badge for a clause checked and cleared — a first-class outcome, not an absent stamp.",
-      "html": "<span class=\"ds-stamp ds-stamp-cleared\">Cleared</span>",
-      "css": ".ds-stamp-cleared { border-color: #4a453c; color: #4a453c; animation: ds-stamp-in 520ms cubic-bezier(0.16,1,0.3,1) both; } @keyframes ds-stamp-in { 0% { opacity: 0; transform: scale(1.6) rotate(-6deg); filter: blur(1px); } 60% { opacity: 1; } 100% { opacity: 1; transform: scale(1) rotate(-1deg); filter: blur(0); } }"
-    },
-    {
-      "name": "ClauseChart Card",
+      "name": "Panel",
       "kind": "card",
-      "refersTo": null,
-      "description": "The signature demonstration component: ink-filled header/footer ledger bands around a ruled list of numbered clause elements, each with a stamp, an oversized quoted sentence, and a rationale line.",
-      "html": "<div class=\"ds-clausechart\"><div class=\"ds-cc-band\"><span>Example agreement — Section 4</span><span>Illustrative, not a real client file</span></div><div class=\"ds-cc-row\"><div class=\"ds-cc-num\">§1</div><div class=\"ds-cc-body\"><span class=\"ds-stamp ds-stamp-critical\">Critical</span><p class=\"ds-cc-quote\">“This Agreement shall automatically renew...”</p><p class=\"ds-cc-rationale\">Easy to miss inside routine renewal language.</p></div></div><div class=\"ds-cc-band\"><span>Elements examined</span><span>3 examined · 2 flagged · 1 cleared</span></div></div>",
-      "css": ".ds-clausechart { border: 3px solid #1d1b18; background: #e9e2d2; font-family: 'Source Serif 4', ui-serif, serif; } .ds-cc-band { display: flex; justify-content: space-between; gap: 12px; background: #1d1b18; color: #f2ede2; padding: 12px 20px; font-family: 'Courier Prime', ui-monospace, monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; } .ds-cc-row { display: grid; grid-template-columns: minmax(0,9rem) 1fr; gap: 16px; padding: 20px; border-top: 3px solid #c9bfa6; } .ds-cc-num { font-family: 'Courier Prime', ui-monospace, monospace; font-weight: 700; color: #4a453c; } .ds-cc-quote { font-style: italic; font-size: 1.25rem; line-height: 1.375; color: #1d1b18; margin: 12px 0; } .ds-cc-rationale { font-size: 0.875rem; color: #4a453c; }"
+      "refersTo": "panel",
+      "description": "The box-ruled white field every section is printed into, with its title over the 7px barline.",
+      "html": "<section class=\"ds-panel\"><div class=\"ds-panel-title\"><h2>How a warning gets its weight</h2></div><p class=\"ds-panel-body\">Two questions decide the tier, and neither is how big the number is.</p></section>",
+      "css": ".ds-panel { background: var(--color-panel-field, #fbfaf7); color: var(--color-ink, #141210); border: 3px solid var(--color-ink, #141210); border-radius: 0; padding: 1.5rem 1.25rem; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; } .ds-panel-title { border-bottom: 7px solid var(--color-ink, #141210); padding-bottom: 0.375rem; } .ds-panel-title h2 { margin: 0; font-size: 1.625rem; font-weight: 800; line-height: 0.95; letter-spacing: -0.01em; text-transform: uppercase; } .ds-panel-body { max-width: 68ch; margin: 0; padding-top: 0.875rem; font-size: 1rem; line-height: 1.55; color: var(--color-ink-soft, #4d4842); }"
     },
     {
-      "name": "Tier-List Row",
+      "name": "Finding, Critical",
       "kind": "custom",
-      "refersTo": null,
-      "description": "Ruled row pattern pairing a Stamp with a plain-language definition; reused for the severity explainer and (with an em-dash in place of the Stamp) the boundary list.",
-      "html": "<ul class=\"ds-tierlist\"><li class=\"ds-tierlist-row\"><span class=\"ds-stamp ds-stamp-critical\">Critical</span><p>Easy to miss and hard to undo once it's triggered.</p></li></ul>",
-      "css": ".ds-tierlist { list-style: none; margin: 0; padding: 0; border-top: 3px solid #c9bfa6; border-bottom: 3px solid #c9bfa6; } .ds-tierlist-row { display: grid; grid-template-columns: 10rem 1fr; align-items: center; gap: 32px; padding: 24px 0; border-bottom: 3px solid #c9bfa6; font-family: 'Source Serif 4', ui-serif, serif; } .ds-tierlist-row:last-child { border-bottom: none; } .ds-tierlist-row p { color: #4a453c; font-size: 1.125rem; line-height: 1.625; max-width: 68ch; }"
+      "refersTo": "finding-critical",
+      "description": "The black-box device: a uniform 6px warning-red box, the heaviest field in the system, with its verbatim sentence at the largest size on the page.",
+      "html": "<button class=\"ds-finding ds-finding-critical\" type=\"button\"><span class=\"ds-finding-head\"><span class=\"ds-tier ds-tier-critical\">Critical</span><span class=\"ds-meta\">Section 2.3 &middot; Term and renewal</span></span><blockquote class=\"ds-quote ds-quote-critical\">&ldquo;This Agreement shall renew automatically for successive twelve (12) month terms.&rdquo;</blockquote><span class=\"ds-reading\">Miss the notice window and you owe another full year.</span></button>",
+      "css": ".ds-finding { display: block; width: 100%; text-align: left; cursor: pointer; background: var(--color-panel-field, #fbfaf7); color: var(--color-ink, #141210); border-radius: 0; padding: 1rem; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; transition: background-color 0.15s; } .ds-finding-critical { border: 6px solid var(--color-critical, #bb1226); } .ds-finding:hover { background: var(--color-panel-field-hover, #f6f4ee); } .ds-finding[aria-pressed=\"true\"], .ds-finding:active { background: var(--color-panel-field-active, #f1eee6); } .ds-finding:focus-visible { outline: 2px solid var(--color-critical, #bb1226); outline-offset: 3px; } .ds-finding-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.25rem 1.25rem; } .ds-tier { font-size: 0.9375rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; } .ds-tier-critical { color: var(--color-critical, #bb1226); } .ds-meta { font-family: \"Archivo Narrow\", ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-ink-soft, #4d4842); } .ds-quote { margin: 0; padding-top: 0.625rem; font-family: Tinos, \"Times New Roman\", Times, serif; } .ds-quote-critical { font-size: 1.75rem; line-height: 1.2; } .ds-reading { display: block; max-width: 68ch; padding-top: 0.75rem; font-size: 0.9375rem; line-height: 1.55; color: var(--color-ink-soft, #4d4842); }"
+    },
+    {
+      "name": "Finding, Serious and Worth noting",
+      "kind": "custom",
+      "refersTo": "finding-serious",
+      "description": "The two colourless tiers: a 3px ink top rule and a 1px ink hairline, each with its quote a real step smaller.",
+      "html": "<button class=\"ds-finding ds-finding-serious\" type=\"button\"><span class=\"ds-finding-head\"><span class=\"ds-tier\">Serious</span><span class=\"ds-meta\">Section 5.1 &middot; Indemnification</span></span><blockquote class=\"ds-quote ds-quote-serious\">&ldquo;Contractor shall indemnify, defend, and hold harmless Client, without limitation as to amount.&rdquo;</blockquote></button><button class=\"ds-finding ds-finding-noted\" type=\"button\"><span class=\"ds-finding-head\"><span class=\"ds-tier\">Worth noting</span><span class=\"ds-meta\">Section 7.2 &middot; Dispute resolution</span></span><blockquote class=\"ds-quote ds-quote-noted\">&ldquo;Any dispute shall be resolved by binding arbitration.&rdquo;</blockquote></button>",
+      "css": ".ds-finding-serious { border-top: 3px solid var(--color-ink, #141210); } .ds-finding-noted { border-top: 1px solid var(--color-ink, #141210); margin-top: 1.25rem; } .ds-quote-serious { font-size: 1.125rem; line-height: 1.35; } .ds-quote-noted { font-size: 1rem; line-height: 1.45; }"
+    },
+    {
+      "name": "Red-line Match Overprint",
+      "kind": "custom",
+      "refersTo": "finding-redline",
+      "description": "A match against the reader's own list: a dashed overprint-blue rule and a stamped code, carrying no severity device at all.",
+      "html": "<div class=\"ds-redline\"><span class=\"ds-tier\">No severity tier</span><blockquote class=\"ds-quote ds-quote-noted\">&ldquo;Client shall pay all undisputed invoices within sixty (60) days of receipt.&rdquo;</blockquote><p class=\"ds-stamp\">RED LINE MATCH &mdash; &ldquo;Nothing longer than net 30.&rdquo;</p></div>",
+      "css": ".ds-redline { background: var(--color-panel-field, #fbfaf7); color: var(--color-ink, #141210); border-top: 2px dashed var(--color-overprint, #1f3fa8); border-radius: 0; padding: 1rem; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; } .ds-stamp { display: inline-block; margin: 0; padding-top: 0.75rem; font-family: DotGothic16, ui-monospace, monospace; font-size: 0.6875rem; line-height: 1.2; color: var(--color-overprint, #1f3fa8); transform: rotate(-1.2deg); }"
+    },
+    {
+      "name": "Source Document Marks",
+      "kind": "custom",
+      "refersTo": "panel",
+      "description": "The cited sentence inside the agreement. Colour only on Critical; a red-line match adds a second, independent dashed underline so both signals draw on one clause.",
+      "html": "<div class=\"ds-source\"><h3 class=\"ds-clause\">2. Term and renewal</h3><p class=\"ds-source-body\">This Agreement begins on the Effective Date. <button class=\"ds-mark ds-mark-critical\" type=\"button\">This Agreement shall renew automatically for successive twelve (12) month terms.</button> Notice delivered after that date shall be of no effect.</p><h3 class=\"ds-clause\">3. Fees and payment</h3><p class=\"ds-source-body\"><button class=\"ds-mark\" type=\"button\"><span class=\"ds-mark-redline\">Client shall pay all undisputed invoices within sixty (60) days of receipt.</span></button> Client shall notify Contractor of any disputed amount.</p></div>",
+      "css": ".ds-source { background: var(--color-panel-field, #fbfaf7); color: var(--color-ink, #141210); border: 3px solid var(--color-ink, #141210); border-radius: 0; padding: 1.25rem; } .ds-clause { margin: 0; font-family: \"Archivo Narrow\", ui-sans-serif, system-ui, sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-soft, #4d4842); } .ds-source-body { margin: 0 0 1rem; padding-top: 0.25rem; font-family: Tinos, \"Times New Roman\", Times, serif; font-size: 0.9375rem; line-height: 1.7; } .ds-mark { font: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; color: inherit; text-decoration: underline; text-decoration-color: var(--color-ink, #141210); text-decoration-thickness: 1px; text-underline-offset: 3px; } .ds-mark:hover { background: var(--color-panel-field-active, #f1eee6); } .ds-mark:focus-visible { outline: 2px solid var(--color-critical, #bb1226); outline-offset: 2px; } .ds-mark-critical { background: var(--color-critical-mark, #fae3e6); text-decoration-color: var(--color-critical, #bb1226); text-decoration-thickness: 3px; } .ds-mark-redline { text-decoration-line: underline; text-decoration-style: dashed; text-decoration-color: var(--color-overprint, #1f3fa8); text-decoration-thickness: 2px; text-underline-offset: 7px; }"
+    },
+    {
+      "name": "Severity Explainer Row",
+      "kind": "custom",
+      "refersTo": "panel",
+      "description": "The legend for the panel: each tier introduced by a bare full-width rule that is the tier's own device.",
+      "html": "<div class=\"ds-tier-row\"><div class=\"ds-tier-rule ds-tier-rule-critical\"></div><div class=\"ds-tier-grid\"><div><p class=\"ds-tier-name ds-tier-critical\">Critical</p><p class=\"ds-tier-test\">Easy to miss and hard to undo.</p></div><p class=\"ds-tier-body\">Buried in language that reads like every other paragraph, and by the time it matters the money is already gone.</p></div></div>",
+      "css": ".ds-tier-row { font-family: Archivo, ui-sans-serif, system-ui, sans-serif; color: var(--color-ink, #141210); } .ds-tier-rule { height: 3px; } .ds-tier-rule-critical { background: var(--color-critical, #bb1226); } .ds-tier-grid { display: grid; gap: 0.375rem 2rem; padding-top: 0.75rem; grid-template-columns: minmax(0, 13rem) 1fr; } .ds-tier-name { margin: 0; font-size: 1.0625rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; } .ds-tier-critical { color: var(--color-critical, #bb1226); } .ds-tier-test { margin: 0; font-family: \"Archivo Narrow\", ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-ink-soft, #4d4842); } .ds-tier-body { margin: 0; max-width: 62ch; font-size: 0.9375rem; line-height: 1.55; color: var(--color-ink-soft, #4d4842); }"
+    },
+    {
+      "name": "Red-line List",
+      "kind": "chip",
+      "refersTo": "panel",
+      "description": "The reader's own red lines, set in the overprint's ink with square bullets and hairline row rules.",
+      "html": "<div class=\"ds-redline-list\"><p class=\"ds-meta\">On the list</p><ul><li><span class=\"ds-bullet\"></span><span class=\"ds-redline-item\">Nothing longer than net 30.</span></li><li><span class=\"ds-bullet\"></span><span class=\"ds-redline-item\">No non-compete, no matter how short.</span></li></ul></div>",
+      "css": ".ds-redline-list { background: var(--color-panel-field, #fbfaf7); color: var(--color-ink, #141210); border: 3px solid var(--color-ink, #141210); border-radius: 0; padding: 1.5rem 1.25rem; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; } .ds-redline-list ul { list-style: none; margin: 0; padding: 0.75rem 0 0; } .ds-redline-list li { display: flex; gap: 0.75rem; padding: 0.625rem 0; border-bottom: 1px solid var(--color-ink, #141210); } .ds-redline-list li:last-child { border-bottom: 0; } .ds-bullet { flex: none; width: 0.5rem; height: 0.5rem; margin-top: 0.45rem; background: var(--color-overprint, #1f3fa8); } .ds-redline-item { font-family: DotGothic16, ui-monospace, monospace; font-size: 0.8125rem; line-height: 1.45; color: var(--color-overprint, #1f3fa8); transform: rotate(-1.2deg); display: inline-block; }"
+    },
+    {
+      "name": "Panel Masthead",
+      "kind": "nav",
+      "refersTo": "panel",
+      "description": "The page has no navigation bar. The only persistent chrome is the panel masthead: wordmark left, descriptor right, over a hairline.",
+      "html": "<header class=\"ds-masthead\"><p class=\"ds-wordmark\">Redline</p><p class=\"ds-descriptor\">Contract review for people without a lawyer on retainer</p></header>",
+      "css": ".ds-masthead { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.25rem 1.5rem; padding-bottom: 0.625rem; border-bottom: 1px solid var(--color-ink, #141210); background: var(--color-panel-field, #fbfaf7); color: var(--color-ink, #141210); font-family: Archivo, ui-sans-serif, system-ui, sans-serif; } .ds-wordmark { margin: 0; font-size: 1.25rem; font-weight: 800; line-height: 1; letter-spacing: 0.02em; text-transform: uppercase; } .ds-descriptor { margin: 0; font-family: \"Archivo Narrow\", ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--color-ink-soft, #4d4842); }"
     }
   ],
   "narrative": {
-    "northStar": "The Claim Chart",
-    "overview": "Redline's landing page is built as a patent examiner's office action, not a SaaS pitch. Onion-skin paper, typewriter labels, and hairline rules stand in for the gradient hero, glyph icons, and floating cards of the category-standard AI-tool look — that arrangement was considered and deliberately rejected (see the surface brief's FORM note). The page proves its own mechanism instead of describing it: a real-looking clause is broken into numbered elements, each stamped with a verdict and backed by its exact quoted sentence, set oversized as proof rather than caption. Color is rationed on purpose. Verdict-red exists only to mark Critical; a quieter ochre-brown marks Serious; two distinct dark neutrals separate \"Worth noting\" from a clause that was checked and cleared. None of these colors ever fill a background — they live only in a thin stamp border and its text, never a flooded row.",
+    "northStar": "The Facts Panel",
+    "overview": "Redline is printed, not rendered. The page is a saturated pharmacy-carton ground carrying a box-ruled white panel set in black ink, the way an over-the-counter carton carries its mandated Drug Facts field — the one typographic system the law already trusts people to read under pressure. There is no nav bar and no hero headline floating above a screenshot; the panel is the headline, and it arrives already filled in with a fictional agreement Redline has read.\n\nThe system's whole argument is that a warning means something only when you can see the sentence it came from. So the two halves of the signature component — the facts panel and the source document beside it — are built as one instrument: selecting a warning marks its exact sentence in the document, and selecting a marked sentence pulls its warning back. Severity is carried by the weight of a rule, never by a badge or a palette, and colour is rationed hard enough that red still means one thing by the time your eye crosses from one panel to the other.\n\nDensity is regulatory: tight leading, ragged-right setting, uppercase condensed labels, square bullets, hairlines between rows, and zero corner radius anywhere. Confirmed rejections: the category's centered headline over a browser-framed screenshot; three coloured badges standing in for a severity model; any numeric risk score. A previous world (\"Card & Review\" — referee cards, broadcast VAR graphic, Teko/Inter/JetBrains Mono, pitch-green turf edge, and the four calls Red Card / Yellow Card / Noted / Play On) is retired and gone from the code; nothing here extends it and it must not be reintroduced.",
     "keyCharacteristics": [
-      "Onion-skin cream ground with black typewriter ink, no gradients, no photography, no illustration.",
-      "Two-voice typography: a humanist serif (Source Serif 4) for prose, headlines, and the evidentiary quote; a monospace typewriter face (Courier Prime) reserved for labels, stamps, numbering, and buttons.",
-      "Flat and bordered throughout — 3px hairline-square borders carry structure; no drop shadows anywhere in the shipped page.",
-      "Verdict color is rationed to thin stamp badges only, never a filled background or row tint."
+      "Pharmacy-carton green ground, uncoated-white panel, black ink",
+      "Severity as rule weight (6px box / 3px rule / 1px hairline), never as a palette",
+      "One accent colour, spent on Critical only",
+      "Red-line matches as a dot-matrix overprint in a second, unrelated ink",
+      "Three typefaces with three non-overlapping jobs",
+      "Verbatim source text is the largest type on the page",
+      "Zero corner radius, square bullets, no shadows"
     ],
     "rules": [
-      { "name": "The Rationed Ink Rule", "body": "Verdict color (red, ochre, the two dark neutrals) appears only inside a stamp badge's border and label text — border-and-text, never a filled background, never a row tint, never more than one verdict color per row.", "section": "colors" },
-      { "name": "The Two-Voice Rule", "body": "Prose and proof are always set in the serif; anything administrative (a label, a count, a button, a stamp) is always set in the uppercase tracked-out monospace. Never mix the two roles within one text run.", "section": "typography" },
-      { "name": "The Flat-and-Bordered Rule", "body": "Depth is never simulated with a shadow of any kind — hard-offset or soft. A surface is either flush with the page or set apart by a 3px ink border. If a component needs to read as \"raised,\" give it a border and an ink-filled band, not a shadow.", "section": "elevation" }
+      {
+        "name": "The Rationed Colour Rule",
+        "body": "Colour belongs to Critical alone, and it holds across panels: in the analysis panel Critical is a red box, in the source document the Critical sentence is a red underline over a pale red wash — and every non-Critical citation mark is an ink-weight underline. An earlier build painted every citation mark red and red stopped meaning anything the moment the eye crossed from one panel to the other. Audit test: count the red elements in a screenshot; each one must trace to the same single Critical finding.",
+        "section": "colors"
+      },
+      {
+        "name": "The Second Ink Rule",
+        "body": "A red-line match is an overprint, never a severity device. It is drawn in Overprint Blue as a dashed underline on an inner span, independent of whatever tier rule the parent carries, so a clause that is both Serious and a red-line match shows both signals at once. A red-line match with no tier gets the overprint's own dashed 2px rule and borrows nothing from the severity system.",
+        "section": "colors"
+      },
+      {
+        "name": "The Three-Voice Rule",
+        "body": "Each face has a job the others cannot do: Archivo and Archivo Narrow are the panel's regulatory voice (headings, labels, rules, body); Tinos is the source document's voice and appears only on verbatim quoted contract text; DotGothic16 is the overprint and appears only on codes and red-line stamps. Never mix a role's face into another role's run — a quote set in the grotesque stops looking quoted, and a heading in Times stops looking like the panel talking.",
+        "section": "typography"
+      },
+      {
+        "name": "The Title Over Barline Rule",
+        "body": "In the Drug Facts lockup the heavy 7px barline sits beneath its title, never above it. Built the other way round first and it read as the claim's underline rather than the panel's rule.",
+        "section": "typography"
+      },
+      {
+        "name": "The Paired Step Rule",
+        "body": "Every heading and quote role is a pair, not a fluid clamp: a base size and one step at >=640px (display 1.875->2.25rem, display-close 1.875->2.375rem, headline 1.625->2rem, quote-critical 1.75->2.75rem, quote-serious 1.125->1.375rem, quote-noted 1->1.0625rem). A size that is not one of those ten values is not in the ramp.",
+        "section": "typography"
+      },
+      {
+        "name": "The Numeral Rule",
+        "body": "Counts, lot codes, and any figure that changes in place use tabular numerals.",
+        "section": "typography"
+      },
+      {
+        "name": "The No Chrome Rule",
+        "body": "The page has no navigation bar and no hero above the panel. The first thing in the viewport is the panel itself, already filled in.",
+        "section": "layout"
+      },
+      {
+        "name": "The Printed Flat Rule",
+        "body": "No box-shadow, no gradient, no blur at rest, no translucency. A surface is separated from its neighbour by a rule or by a change of stock, never by lift.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Entrance Never Hides Text Rule",
+        "body": "The authored entrance animates transform and filter only — print-set moves 7px and clears a 2.5px blur, print-bar sweeps rules from scaleX(0) left to right, print-stamp lands the lot code last at 760ms. Nothing animates opacity except the stamp, so every word is readable whether or not the animation runs. Finding blocks stagger heaviest-first from 280ms in 90ms steps. All three are disabled entirely under prefers-reduced-motion, along with smooth scrolling.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Uniform Box Rule",
+        "body": "A boxed warning is a box: uniform rule weight on all four sides. The Critical weight was briefly built as a 10px left border and reverted — a thick coloured side bar is a callout costume from another design language, and it is banned here at any weight or colour.",
+        "section": "shapes"
+      }
     ],
     "dos": [
-      "Do keep verdict color inside a stamp's border-and-text only; never fill a row, card, or background with critical/serious/noting color.",
-      "Do render a \"cleared\" verdict as its own stamp (ink-soft border/text), not as the absence of a stamp — a clean result must be as legible as a flagged one.",
-      "Do reserve Courier Prime for labels, counts, numbering, and buttons; keep prose and the evidentiary quote in Source Serif 4.",
-      "Do use 3px ink borders and ink-filled bands for structure and hierarchy, never a shadow."
+      "Do rank severity by rule weight: 6px box (Critical), 3px top rule (Serious), 1px hairline (Worth noting), all in Ink except Critical.",
+      "Do spend Warning Red only on Critical, in both panels, and keep every other citation mark at ink weight.",
+      "Do draw a red-line match as an overprint — dashed Overprint Blue, on an inner span, independent of any tier rule — so a clause carrying both signals shows both.",
+      "Do mark a citation with text-decoration so the rule stops exactly where the sentence stops, including on its last wrapped line.",
+      "Do set every verbatim quoted clause in Tinos, and nothing else in Tinos.",
+      "Do put the 7px barline beneath its title.",
+      "Do animate transform and filter on entrance, never opacity on text, and disable the entrance under prefers-reduced-motion.",
+      "Do keep every corner square and every surface flat."
     ],
     "donts": [
-      "Don't reintroduce a box-shadow of any kind (hard-offset or soft) — a 6px 6px 0 0 neobrutalist shadow was tried on the ClauseChart card and removed in finish review; the system is flat-and-bordered, not shadowed.",
-      "Don't reach for the gradient-hero \"AI reviews your contract\" arrangement (hero gradient, floating glass cards, glyph icon set) — that was the rejected category-standard direction, not this world.",
-      "Don't round any corner. No border-radius appears anywhere in the shipped system.",
-      "Don't use the Serious ochre from the original direction contract (#b8802e) — the shipped, normative value is #8a5a1c."
+      "Don't introduce a second or third tier colour, a coloured badge, or a numeric risk score. Three named tiers, ranked by rule weight, is the whole model.",
+      "Don't build a boxed warning as a thick coloured left border. A box rule is uniform on four sides; a coloured side bar is a banned callout costume.",
+      "Don't mark a cited sentence with border-top (it paints once on an inline element and lands above the preceding line) or with a painted background (it sizes to the inline box and overruns the sentence on the last wrapped line). Both were built and both were wrong.",
+      "Don't let a red-line match change, borrow, or imply a severity tier, and don't give a tierless match a severity rule.",
+      "Don't set a heading in Tinos or a quote in Archivo, and don't use DotGothic16 for anything but overprint codes and red-line stamps.",
+      "Don't add a shadow, a gradient, a corner radius, or a hero headline above the panel.",
+      "Don't show a warning without its source sentence reachable and visible in the document panel.",
+      "Don't reintroduce the retired \"Card & Review\" world — referee cards, broadcast VAR graphic, Teko/Inter/JetBrains Mono, pitch-green turf edge, or the Red Card / Yellow Card / Noted / Play On naming. It is gone from the code and is not a fallback."
     ]
   }
 }

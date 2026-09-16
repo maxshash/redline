@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { typewriter, document as documentFont } from "./fonts";
+import { panel, panelNarrow, source, overprint } from "./fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Redline: see exactly what a contract does to you",
+  title: "Redline: every warning quotes the sentence it came from",
   description:
-    "Upload a contract and get every risky clause flagged, ranked, and shown next to the exact sentence it came from.",
+    "Redline reads a contract you cannot negotiate and hands back what it found, ranked by how easy it is to miss and how hard it is to undo, with the exact sentence beside each one.",
 };
 
 export default function RootLayout({
@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${typewriter.variable} ${documentFont.variable} bg-paper text-ink antialiased`}
+        className={`${panel.variable} ${panelNarrow.variable} ${source.variable} ${overprint.variable} bg-carton text-carton-ink antialiased`}
       >
         {children}
       </body>

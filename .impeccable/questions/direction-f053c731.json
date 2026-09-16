@@ -1,0 +1,173 @@
+{
+  "title": "Choose the visual world for Redline",
+  "question": "One round, both surfaces — whatever you lock here becomes the landing page I build today and the world the app shell inherits. The roll assigned The Hazard Chart. Keep it, take an alternate, or re-roll.",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "The Hazard Chart",
+      "kicker": "THE ROLL",
+      "lineage": "Admiralty hydrographic charts",
+      "thesis": "Your contract charted as a passage you are already committed to crossing, every danger fixed at its exact position.",
+      "palette": ["#f4efe1", "#e2d3ab", "#9fcfe0", "#cc0066", "#12171c"],
+      "materials": ["engraved line work", "magenta caution overprint", "sounding numerals"],
+      "viewport": "A stretch of charted passage runs full-bleed. The clause text is the water itself, set in chart lettering with sounding numerals scattered across it; hazard symbols sit at charted positions along the route; a magenta caution box pulls one quoted sentence out beside its position, and the source panel under it names which survey that region came from. The single action sits on the chart's own title block.",
+      "risk": "A chart can abstract the words away. If the passage becomes a pretty map, the exact sentence dies inside the metaphor.",
+      "case": "Charts are the one graphic tradition that already solved this product's exact problem: they mark danger at a fixed position on something you cannot renegotiate, they refuse to tell you whether to sail, and they carry a source diagram stating the provenance of every region on the sheet.",
+      "raised": [
+        {
+          "from": "challenger-sixpack",
+          "raise": "Every flag now owns exactly one job at one fixed reading position, and severity reads as graded magenta weight before any badge is involved."
+        },
+        {
+          "from": "challenger-deepdive",
+          "raise": "One control walks the whole demonstration — position, hazard, and quoted sentence move together, and no flag ever detaches from its charted position."
+        },
+        {
+          "from": "challenger-orizuru",
+          "raise": "The finished analysis shows its own derivation: the route it took stays visible and replayable instead of resolving into a verdict that hides its work."
+        },
+        {
+          "from": "challenger-tropicalia",
+          "raise": "Severity is carried by real scale difference — a Critical hazard occupies visibly more of the chart than a Worth-noting one — not only by a colored symbol."
+        },
+        {
+          "from": "challenger-waxpack",
+          "raise": "The page carries one dense ruled passage, the chart's source diagram, where provenance is stated per region rather than asserted once in a headline."
+        }
+      ],
+      "wireframe": {
+        "cols": 12,
+        "rows": 10,
+        "regions": [
+          { "label": "title block / nav", "x": 0, "y": 0, "w": 12, "h": 1 },
+          { "label": "charted passage — clause text as water", "x": 0, "y": 1, "w": 7, "h": 6 },
+          { "label": "magenta caution box + quoted sentence", "x": 7, "y": 1, "w": 5, "h": 3, "accent": true },
+          { "label": "source panel — which survey this came from", "x": 7, "y": 4, "w": 5, "h": 3 },
+          { "label": "primary action on the title block", "x": 0, "y": 7, "w": 5, "h": 1, "accent": true },
+          { "label": "hazard legend — the three tiers", "x": 5, "y": 7, "w": 7, "h": 1 },
+          { "label": "boundaries / what this is not", "x": 0, "y": 8, "w": 12, "h": 2 }
+        ]
+      }
+    },
+    {
+      "id": "model-pick",
+      "label": "The Facts Panel",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "FDA Drug Facts panel and the boxed warning",
+      "thesis": "The document's dangers set in the one typographic system the law already trusts to be read.",
+      "palette": ["#ffffff", "#111111", "#d81f26", "#f2f0eb"],
+      "materials": ["mandated rule work", "carton stock", "boxed warning"],
+      "viewport": "One panel ruled top to bottom at full width. The plain-English summary sits where Active Ingredients sits; each flagged clause is a boxed warning, its verbatim sentence set inside the box rule at the largest type on the page; the heaviest rule in the system belongs to the Critical tier, the way a black box warning outranks everything around it.",
+      "risk": "Familiar and effective. A strict black-rule panel with one red is also close to where most runs in this category land.",
+      "case": "Topped my ranked list. It is the only candidate where the severity hierarchy, the verbatim-quote requirement, and the refusal to give a verdict are all already law rather than design choices.",
+      "wireframe": {
+        "cols": 12,
+        "rows": 10,
+        "regions": [
+          { "label": "panel head — product name + rule", "x": 0, "y": 0, "w": 12, "h": 1 },
+          { "label": "summary block (‘Active Ingredients’)", "x": 0, "y": 1, "w": 12, "h": 2 },
+          { "label": "boxed warning — Critical, verbatim sentence", "x": 0, "y": 3, "w": 12, "h": 3, "accent": true },
+          { "label": "Serious rows", "x": 0, "y": 6, "w": 6, "h": 2 },
+          { "label": "Worth noting rows", "x": 6, "y": 6, "w": 6, "h": 2 },
+          { "label": "primary action + boundaries", "x": 0, "y": 8, "w": 12, "h": 2 }
+        ]
+      }
+    },
+    {
+      "id": "challenger-zine",
+      "label": "Hand-Drawn Explainer",
+      "verdict": "competitive",
+      "lineage": "hand-drawn technical zine",
+      "thesis": "A friend sketching your contract on a napkin, highlighter landing on the one line that matters.",
+      "palette": ["#f8f2e2", "#171717", "#ffe14d", "#f45d9e", "#17b3ab"],
+      "materials": ["marker ink", "highlighter swipe", "cream paper"],
+      "viewport": "Marker headline over a doodled contract page, hand-drawn arrows looping to a highlighter swipe that lands on one sentence, a call-out in marker lettering naming what it costs you.",
+      "risk": "Cream paper and a mascot read as ‘this isn't serious’ on the document that takes your money.",
+      "case": "Holds audience identification outright — the highlighter swipe on one line is exactly this product's citation gesture, and it disarms legalese for a reader who finds it intimidating. Loses product clarity: Redline's entire job is being trusted about money, and a doodle undercuts that faster than it warms it up.",
+      "hero": "https://impeccable.style/worlds/cards/hand-drawn-zine-explainer-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/hand-drawn-zine-explainer.webp"
+    },
+    {
+      "id": "challenger-sixpack",
+      "label": "Night Instrument Six-Pack",
+      "verdict": "declined",
+      "lineage": "small-aircraft night instrument panel",
+      "thesis": "Six luminous gauges holding a pilot's trust through cloud.",
+      "palette": ["#0b0d0c", "#e8ece9", "#7ce07c", "#e0a020"],
+      "materials": ["matte instrument panel", "luminous markings"],
+      "viewport": "Two ranked rows of three dials, each owning one reading, swept in a fixed cross-check order.",
+      "risk": "Matte black and radium green is the dark tech register this audience was already told reads wrong.",
+      "case": "Fuses poorly on both axes: a gauge shows a value, and this product's unit of trust is a sentence, so the citation has nowhere to live.",
+      "kept": "One truth per instrument, read in a fixed sweep.",
+      "hero": "https://impeccable.style/worlds/cards/signals-instruments-night-flight-six-pack-hero.webp"
+    },
+    {
+      "id": "challenger-deepdive",
+      "label": "Mesophotic Deep Dive",
+      "verdict": "declined",
+      "lineage": "technical dive down a volcanic wall",
+      "thesis": "A descent past the thermocline into a garden with no visible floor.",
+      "palette": ["#04121f", "#0a3b5c", "#5fd8e8", "#f2f7f8"],
+      "materials": ["marine snow", "dive-computer digits"],
+      "viewport": "A vertical wall descending past a cyan thermocline band, one depth axis ruling every line of copy.",
+      "risk": "A freelancer holding a PDF does not identify with a technical diver.",
+      "case": "Fuses poorly on both axes: depth-as-severity fights three named tiers, and the descent buries the text it exists to quote.",
+      "kept": "One scrub moves light, state, and obligation together.",
+      "hero": "https://impeccable.style/worlds/cards/rivers-tides-ocean-depths-mesophotic-deep-dive-hero.webp"
+    },
+    {
+      "id": "challenger-orizuru",
+      "label": "Orizuru Fold Sequence",
+      "verdict": "declined",
+      "lineage": "thirty-two folds of one vermilion square",
+      "thesis": "One uncut sheet passing from flat geometry to a standing crane.",
+      "palette": ["#c8262b", "#f7f1e6", "#b89545", "#1a1a18"],
+      "materials": ["vermilion washi", "kozo fiber", "sumi ink"],
+      "viewport": "A red square mid-collapse, crease pattern numbered down a strict margin column.",
+      "risk": "Thirty-two deliberate folds is a patience ritual; reading a contract before Friday is not.",
+      "case": "Fuses poorly on both axes: folding transforms the sheet, and Redline never transforms the document, it annotates it.",
+      "kept": "The finished form still shows every crease that made it.",
+      "hero": "https://impeccable.style/worlds/cards/paper-folds-pleats-deployable-orizuru-crane-sequence-hero.webp"
+    },
+    {
+      "id": "challenger-tropicalia",
+      "label": "Tropicália Sleeve Collage",
+      "verdict": "declined",
+      "lineage": "Brazilian album sleeve paste-up",
+      "thesis": "Cut-out figures pasted at deliberately wrong scales into a painted tableau.",
+      "palette": ["#1f7a35", "#f2a51a", "#e0472c", "#0e3b2a"],
+      "materials": ["scissor-cut photography", "painted backdrop"],
+      "viewport": "One crowded scene of pasted cut-outs among painted leaves, lettering thrown across the whole field.",
+      "risk": "Exuberant collage against quiet financial harm reads as mockery of the reader.",
+      "case": "Fuses poorly on both axes: mismatched scale as joy is the opposite of a ranked severity order, and the tone fights the subject outright.",
+      "kept": "Scale mismatch alone can carry the ranking.",
+      "hero": "https://impeccable.style/worlds/cards/posters-covers-sleeves-tropicalia-sleeve-collage-hero.webp"
+    },
+    {
+      "id": "challenger-waxpack",
+      "label": "Wax Pack Card",
+      "verdict": "declined",
+      "lineage": "wax pack of baseball cards",
+      "thesis": "A dealt stack with team-color borders and a ruled stat table on every back.",
+      "palette": ["#1d4ea8", "#c1272d", "#b9b5a8", "#c9a227"],
+      "materials": ["gum-gray cardstock", "team-color borders"],
+      "viewport": "Cards dealt one at a time, portrait front, ruled monospaced stat table on the flip.",
+      "risk": "Sits uncomfortably close to the card world this project just retired.",
+      "case": "Fuses poorly on both axes: the flip hides the source behind an interaction, and a flag whose citation needs a flip is a bug here, not a feature.",
+      "kept": "A dense ruled table that rewards close reading.",
+      "hero": "https://impeccable.style/worlds/cards/pop-culture-shelf-wax-pack-card-hero.webp"
+    }
+  ],
+  "canon": true,
+  "canonCard": {
+    "label": "The category standard",
+    "thesis": "What an AI contract tool ships, executed impeccably.",
+    "palette": ["#ffffff", "#0f172a", "#2563eb", "#f1f5f9"],
+    "materials": ["clean grid", "UI screenshot"],
+    "viewport": "Centered headline, a browser-framed product screenshot beneath it, three icon feature cards under that.",
+    "risk": "Indistinguishable from the competition by design."
+  },
+  "reroll": { "registers": ["safer", "bolder"] },
+  "steer": true,
+  "buildPath": { "value": "code", "toggle": false }
+}

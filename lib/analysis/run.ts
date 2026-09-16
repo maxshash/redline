@@ -54,7 +54,7 @@ export async function runAnalyzeDocument(input: unknown, deps: RunAnalyzeDeps): 
   }
 
   try {
-    const analysis = await analyzeDocument(validation.text, { model });
+    const analysis = await analyzeDocument(validation.text, { model, log });
     return { status: "analyzed", analysis };
   } catch (error) {
     if (error instanceof AnalysisError && error.kind === "invalid-output") {

@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { AXIS_LABEL, TIER_LABEL, clauseLabel } from "@/lib/analysis/labels";
-import type { Analysis, Flag, SeverityTier } from "@/lib/analysis/types";
+import type { Analysis, CounterOffer, Flag, FlagWithCounterOffer, SeverityTier } from "@/lib/analysis/types";
 
 /** What the page knows about the analysis of the document in hand. */
 export type AnalysisRun =
@@ -46,6 +47,13 @@ export const FACTS_COPY = {
   cleanNoted: (count: number) =>
     count === 1 ? "One clause is still worth a look, listed below." : `${count} clauses are still worth a look, listed below.`,
   cleanNothing: "Redline didn't find other clauses that shift cost or control onto you.",
+  counterOfferHeading: "Ask for this instead",
+  counterOfferSource: "Suggested by Redline, not quoted from the document",
+  counterOfferUnavailable: "Redline couldn't suggest other wording for this clause.",
+  copy: "Copy wording",
+  copyLabel: "Copy the suggested wording",
+  copied: "Copied",
+  copyFailed: "Couldn't copy. Select the text and copy it by hand.",
 } as const;
 
 function tierCounts(flags: readonly Flag[]): string {
@@ -183,7 +191,7 @@ function FlagBlock({
   onSelect,
   delay,
 }: {
-  flag: Flag;
+  flag: FlagWithCounterOffer;
   active: boolean;
   onSelect: () => void;
   delay: number;
@@ -217,6 +225,73 @@ function FlagBlock({
         <span className={`block pt-3 ${narrowClass}`}>{AXIS_LABEL[flag.axis]}</span>
         <span className="block max-w-[68ch] pt-1 text-[0.9375rem] leading-[1.55] text-ink-soft">{flag.rationale}</span>
       </button>
+
+      {/* Only ever rendered inside a flag block, under the citation it answers. */}
+      <CounterOfferBlock counterOffer={flag.counterOffer} />
+    </div>
+  );
+}
+
+type CopyState = "idle" | "copied" | "failed";
+
+/**
+ * The reader's proposed wording for the clause quoted above it. It isn't
+ * source text, so it is set in the panel's own face, never in Tinos.
+ */
+function CounterOfferBlock({ counterOffer }: { counterOffer: CounterOffer }) {
+  const [copy, setCopy] = useState<CopyState>("idle");
+
+  useEffect(() => {
+    if (copy !== "copied") return;
+    const timer = setTimeout(() => setCopy("idle"), 2000);
+    return () => clearTimeout(timer);
+  }, [copy]);
+
+  if (counterOffer.status === "unavailable") {
+    return (
+      <div className="px-4 pb-4">
+        <p className="border-t border-ink pt-3 text-[0.9375rem] leading-[1.55] text-ink-soft">
+          {FACTS_COPY.counterOfferUnavailable}
+        </p>
+      </div>
+    );
+  }
+
+  const { proposedLanguage, note } = counterOffer;
+
+  async function copyWording() {
+    try {
+      await navigator.clipboard.writeText(proposedLanguage);
+      setCopy("copied");
+    } catch {
+      setCopy("failed");
+    }
+  }
+
+  return (
+    <div className="px-4 pb-4">
+      <div className="border-t border-ink pt-3">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-1">
+          <h4 className={labelClass}>{FACTS_COPY.counterOfferHeading}</h4>
+          <button
+            type="button"
+            onClick={() => void copyWording()}
+            aria-label={copy === "copied" ? FACTS_COPY.copied : FACTS_COPY.copyLabel}
+            className="cursor-pointer text-[0.9375rem] font-bold text-ink underline decoration-1 underline-offset-[3px] hover:decoration-[3px]"
+          >
+            {copy === "copied" ? FACTS_COPY.copied : FACTS_COPY.copy}
+          </button>
+        </div>
+        <p className={`${narrowClass} pt-0.5`}>{FACTS_COPY.counterOfferSource}</p>
+        <p className="max-w-[68ch] whitespace-pre-line break-words pt-2.5 text-[1rem] leading-[1.55] text-ink">
+          {proposedLanguage}
+        </p>
+        {note && <p className="max-w-[68ch] pt-1.5 text-[0.9375rem] leading-[1.55] text-ink-soft">{note}</p>}
+        <p aria-live="polite" className="text-[0.9375rem] leading-[1.55] text-ink-soft">
+          {copy === "failed" && FACTS_COPY.copyFailed}
+          {copy === "copied" && <span className="sr-only">{FACTS_COPY.copied}</span>}
+        </p>
+      </div>
     </div>
   );
 }

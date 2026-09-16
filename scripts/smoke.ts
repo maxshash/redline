@@ -1,6 +1,7 @@
 /**
  * End-to-end smoke run: the adhesion fixture through the real analyzeDocument
- * and the real model. `npm run smoke`. Prints the result and which planted
+ * and the real model. `npm run smoke`. Prints the result, each flag's
+ * counter-offer under its source sentence, and which planted
  * clauses were found. Never prints the API key.
  */
 import { analyzeDocument } from "../lib/analysis/analyze";
@@ -42,6 +43,12 @@ async function main(): Promise<number> {
     console.log(`\n${i + 1}. ${flag.severity.toUpperCase()} · ${flag.clauseType} · axis: ${flag.axis}`);
     console.log(`   Source [${flag.citation.start}-${flag.citation.end}]: ${flag.citation.text}`);
     console.log(`   Rationale: ${flag.rationale}`);
+    if (flag.counterOffer.status === "drafted") {
+      console.log(`   Counter-offer: ${flag.counterOffer.proposedLanguage}`);
+      if (flag.counterOffer.note) console.log(`   Note: ${flag.counterOffer.note}`);
+    } else {
+      console.log("   Counter-offer: unavailable");
+    }
   });
 
   const v = analysis.verification;
@@ -52,6 +59,7 @@ async function main(): Promise<number> {
   console.log(`  dropped, invalid    ${v.droppedInvalid}`);
   console.log(`  dropped, duplicate  ${v.droppedDuplicate}`);
   console.log(`  rationales replaced ${v.rationalesReplaced}`);
+  console.log(`  counter-offers      ${v.counterOffersDrafted} drafted, ${v.counterOffersUnavailable} unavailable`);
 
   const results = plantedClausesFound(fixture, analysis.flags);
   const found = results.filter((r) => r.flags.length > 0).length;

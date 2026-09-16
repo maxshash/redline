@@ -1,3 +1,9 @@
+import {
+  COUNTER_OFFER_FLAGS_END,
+  COUNTER_OFFER_FLAGS_START,
+  COUNTER_OFFER_SCHEMA_NAME,
+  type CounterOfferRequestFlag,
+} from "@/lib/analysis/prompt";
 import type { JsonRequest, ModelClient } from "@/lib/model/client";
 import { FIXTURE_NAMES, loadFixture, type Fixture, type PlantedClause } from "./fixtures";
 
@@ -26,9 +32,25 @@ export interface StubFaults {
   output?: "not-json" | "no-summary" | "no-flags";
   /** Throw instead of answering. */
   throws?: boolean;
+
+  /** Counter-offer call: throw instead of answering. */
+  counterOfferThrows?: boolean;
+  /** Counter-offer call: leave these clauses' answers out. */
+  counterOfferOmit?: string[];
+  /** Counter-offer call: answer this clause under a flag id that wasn't sent. */
+  counterOfferUnknownId?: string;
+  /** Counter-offer call: answer this clause with blank language. */
+  counterOfferEmpty?: string;
+  /** Counter-offer call: return an object with no counterOffers list. */
+  counterOfferNoList?: boolean;
 }
 
+/** The quote the `fabricatedQuote` fault adds. It is in neither fixture. */
+export const FABRICATED_QUOTE =
+  "Consultant shall pay Client a cancellation fee of five thousand dollars ($5,000) if Consultant ends this Agreement early.";
+
 export interface StubModel extends ModelClient {
+  /** Every request, in order: analysis and counter-offer calls alike. */
   requests: JsonRequest[];
   /** Which fixture the last request carried. */
   lastFixture: Fixture | null;
@@ -39,6 +61,10 @@ export interface StubModel extends ModelClient {
  * it was sent by finding the fixture's text in the request, never by reading
  * the prompt's wording, then answers with that sidecar's summary and one flag
  * per planted clause, in sidecar order (which is not document order).
+ *
+ * It tells the counter-offer request from the analysis request by the JSON
+ * schema name, and answers it with the sidecar's `counterOffer` for each flag
+ * whose cited text covers a planted sentence, keyed by the flag ids it was sent.
  */
 export function stubModel(faults: StubFaults = {}): StubModel {
   const fixtures = FIXTURE_NAMES.map(loadFixture);
@@ -50,6 +76,8 @@ export function stubModel(faults: StubFaults = {}): StubModel {
       const fixture = fixtures.find((f) => request.user.includes(f.text));
       if (!fixture) throw new Error("stub model: the request didn't contain a known fixture document");
       stub.lastFixture = fixture;
+
+      if (request.name === COUNTER_OFFER_SCHEMA_NAME) return answerCounterOffers(fixture, request, faults);
 
       if (faults.throws) throw new Error("stub model: simulated failure");
       if (faults.output === "not-json") return "Sorry, I can't help with that.";
@@ -79,7 +107,7 @@ export function stubModel(faults: StubFaults = {}): StubModel {
 
       if (faults.fabricatedQuote) {
         flags.push({
-          quote: "Consultant shall pay Client a cancellation fee of five thousand dollars ($5,000) if Consultant ends this Agreement early.",
+          quote: FABRICATED_QUOTE,
           clauseType: "early-exit-fee",
           severity: "critical",
           axis: "both",
@@ -93,6 +121,38 @@ export function stubModel(faults: StubFaults = {}): StubModel {
     },
   };
   return stub;
+}
+
+/** The flags a counter-offer request sent to the model. */
+export function counterOfferFlagsIn(request: JsonRequest): CounterOfferRequestFlag[] {
+  const start = request.user.lastIndexOf(COUNTER_OFFER_FLAGS_START);
+  const end = request.user.lastIndexOf(COUNTER_OFFER_FLAGS_END);
+  if (start === -1 || end < start) throw new Error("stub model: the counter-offer request carried no flags block");
+  return JSON.parse(request.user.slice(start + COUNTER_OFFER_FLAGS_START.length, end)) as CounterOfferRequestFlag[];
+}
+
+/** The counter-offer requests among everything the stub was sent. */
+export function counterOfferRequests(stub: StubModel): JsonRequest[] {
+  return stub.requests.filter((request) => request.name === COUNTER_OFFER_SCHEMA_NAME);
+}
+
+function answerCounterOffers(fixture: Fixture, request: JsonRequest, faults: StubFaults) {
+  if (faults.counterOfferThrows) throw new Error("stub model: simulated counter-offer failure");
+  if (faults.counterOfferNoList) return { drafts: "none" };
+
+  const counterOffers: { flagId: string; proposedLanguage: string; note: string }[] = [];
+  for (const flag of counterOfferFlagsIn(request)) {
+    // A quote that has turned line breaks into spaces still covers its sentence.
+    const quote = flag.quote.replace(/\s+/g, " ");
+    const clause = fixture.sidecar.plantedClauses.find((c) => quote.includes(c.sentence.replace(/\s+/g, " ")));
+    if (!clause || faults.counterOfferOmit?.includes(clause.id)) continue;
+    counterOffers.push({
+      flagId: faults.counterOfferUnknownId === clause.id ? "flag-unknown" : flag.flagId,
+      proposedLanguage: faults.counterOfferEmpty === clause.id ? "  " : clause.counterOffer,
+      note: "",
+    });
+  }
+  return { counterOffers };
 }
 
 /** The planted sentence and the paragraph before it, joined by one space instead of the blank line. */

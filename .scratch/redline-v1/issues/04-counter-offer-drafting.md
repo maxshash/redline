@@ -4,9 +4,9 @@
 
 **Blocked by:** 03 (analyzeDocument seam: summary + severity-tiered flags with citations)
 
-**Status:** ready-for-agent
+**Status:** done (stub-model suite passes; live-model run recorded in BUILD-REPORT.md)
 
-- [ ] Every flag with a valid citation carries a drafted counter-offer proposing concrete alternative language.
-- [ ] There is no code path that drafts a counter-offer for an uncited flag — enforced at the type/code level, not just by convention.
-- [ ] Counter-offer text is displayed alongside its flag in the UI.
-- [ ] Test: a flag lacking a citation cannot produce a counter-offer (this state is unrepresentable, not just untested).
+- [x] Every flag with a valid citation carries a drafted counter-offer proposing concrete alternative language.
+- [x] There is no code path that drafts a counter-offer for an uncited flag — enforced at the type/code level, not just by convention.
+- [x] Counter-offer text is displayed alongside its flag in the UI.
+- [x] Test: a flag lacking a citation cannot produce a counter-offer (this state is unrepresentable, not just untested).

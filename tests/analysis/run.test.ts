@@ -42,7 +42,26 @@ describe("runAnalyzeDocument input", () => {
       adhesion.text,
       state.analysis.flags.map((flag) => flag.citation),
     );
+    expect(state.analysis.verification).toMatchObject({ counterOffersDrafted: 8, counterOffersUnavailable: 0 });
+
+    const received = JSON.parse(JSON.stringify(state)) as typeof state;
+    expect(received).toEqual(state);
+    for (const flag of received.analysis.flags) {
+      expect(flag.counterOffer.status).toBe("drafted");
+      expect(adhesion.sidecar.plantedClauses.map((clause) => clause.counterOffer)).toContain(
+        flag.counterOffer.status === "drafted" ? flag.counterOffer.proposedLanguage : null,
+      );
+    }
+  });
+
+  it("still returns the analysis when only the counter-offer call fails, and logs why", async () => {
+    const { deps: d, logs } = deps(() => stubModel({ counterOfferThrows: true }));
+    const state = await runAnalyzeDocument({ text: adhesion.text }, d);
+    if (state.status !== "analyzed") throw new Error(`expected an analysis, got ${state.status}`);
+    expect(state.analysis.flags).toHaveLength(8);
+    expect(state.analysis.flags.every((flag) => flag.counterOffer.status === "unavailable")).toBe(true);
     expect(JSON.parse(JSON.stringify(state))).toEqual(state);
+    expect(logs.join("\n")).toContain("simulated counter-offer failure");
   });
 });
 

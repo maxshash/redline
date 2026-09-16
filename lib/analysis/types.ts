@@ -40,6 +40,24 @@ export interface Flag {
   rationale: string;
 }
 
+/**
+ * A counter-offer for one flag: replacement wording for the cited clause that
+ * the reader could send back. "unavailable" means the drafting call failed,
+ * returned something unusable, or skipped this flag.
+ */
+export type CounterOffer =
+  | { status: "drafted"; proposedLanguage: string; note?: string }
+  | { status: "unavailable" };
+
+/**
+ * A flag as the reader gets it. It is a `Flag`, so it holds a verified
+ * `Citation`, and counter-offers are only drafted from `Flag` values
+ * (`draftCounterOffers`). There is no counter-offer without a source (ADR 0001).
+ */
+export interface FlagWithCounterOffer extends Flag {
+  counterOffer: CounterOffer;
+}
+
 /** What happened to the model's proposed flags on the way to `flags`. */
 export interface Verification {
   /** Flags the model proposed. */
@@ -54,12 +72,16 @@ export interface Verification {
   droppedDuplicate: number;
   /** Kept flags whose rationale asserted something the quote doesn't contain. */
   rationalesReplaced: number;
+  /** Kept flags that carry a drafted counter-offer. */
+  counterOffersDrafted: number;
+  /** Kept flags whose counter-offer couldn't be drafted. */
+  counterOffersUnavailable: number;
 }
 
 export interface Analysis {
   /** Plain English, stating only what the document says. */
   summary: string;
   /** Critical, then serious, then worth noting; within a tier, in document order. */
-  flags: Flag[];
+  flags: FlagWithCounterOffer[];
   verification: Verification;
 }

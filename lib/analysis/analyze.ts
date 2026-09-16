@@ -1,5 +1,6 @@
 import type { ModelClient } from "@/lib/model/client";
 import { locateCitation } from "./citation";
+import { draftCounterOffers } from "./counter-offer";
 import { ANALYSIS_SCHEMA, ANALYSIS_SCHEMA_NAME, ANALYSIS_SYSTEM_PROMPT, analysisUserMessage } from "./prompt";
 import {
   SEVERITY_AXES,
@@ -32,6 +33,8 @@ export class AnalysisError extends Error {
 
 export interface AnalyzeDeps {
   model: ModelClient;
+  /** Where a failure that doesn't stop the analysis is reported. Defaults to console.error. */
+  log?: (message: string) => void;
 }
 
 /**
@@ -44,6 +47,11 @@ export interface AnalyzeDeps {
  * quote; if it asserts something the quote doesn't contain, the flag is kept
  * (ADR 0004) and the rationale is replaced with one that asserts nothing
  * beyond the tier and axis (ADR 0005). Zero flags is a valid result (ADR 0006).
+ *
+ * Only then, and only if at least one flag survived, a second call drafts a
+ * counter-offer per flag (`draftCounterOffers`). It only ever sees verified
+ * flags. If that call fails, the flags still come back, each with an
+ * "unavailable" counter-offer.
  *
  * `text` is passed to the model unchanged, and citations index into it.
  */
@@ -84,6 +92,8 @@ export async function analyzeDocument(text: string, deps: AnalyzeDeps): Promise<
     droppedInvalid: 0,
     droppedDuplicate: 0,
     rationalesReplaced: 0,
+    counterOffersDrafted: 0,
+    counterOffersUnavailable: 0,
   };
 
   const bySpan = new Map<string, Flag>();
@@ -128,7 +138,13 @@ export async function analyzeDocument(text: string, deps: AnalyzeDeps): Promise<
   );
   verification.kept = flags.length;
 
-  return { summary, flags, verification };
+  const withCounterOffers = flags.length > 0 ? await draftCounterOffers(text, flags, deps) : [];
+  for (const flag of withCounterOffers) {
+    if (flag.counterOffer.status === "drafted") verification.counterOffersDrafted++;
+    else verification.counterOffersUnavailable++;
+  }
+
+  return { summary, flags: withCounterOffers, verification };
 }
 
 interface Proposal {

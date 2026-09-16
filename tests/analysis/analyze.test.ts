@@ -3,6 +3,7 @@ import { AnalysisError, analyzeDocument } from "@/lib/analysis/analyze";
 import { locateCitation, type Citation } from "@/lib/analysis/citation";
 import type { Analysis, Flag } from "@/lib/analysis/types";
 import { SEVERITY_TIERS } from "@/lib/analysis/types";
+import { ANALYSIS_SCHEMA_NAME } from "@/lib/analysis/prompt";
 import { checkRationale, figuresIn } from "@/lib/analysis/voice";
 import { expectCitationsVerbatim } from "../support/citations";
 import { loadFixture, type FixtureName } from "../support/fixtures";
@@ -132,6 +133,8 @@ describe("clean document", () => {
       droppedInvalid: 0,
       droppedDuplicate: 0,
       rationalesReplaced: 0,
+      counterOffersDrafted: 0,
+      counterOffersUnavailable: 0,
     });
   });
 });
@@ -246,7 +249,7 @@ describe("validation of model output", () => {
     const model = stubModel();
     await analyzeDocument(adhesion.text, { model });
     expect(model.lastFixture?.name).toBe("adhesion-contract");
-    expect(model.requests).toHaveLength(1);
+    expect(model.requests.filter((request) => request.name === ANALYSIS_SCHEMA_NAME)).toHaveLength(1);
   });
 });
 

@@ -1,16 +1,20 @@
 import { describe, expect, it } from "vitest";
 import { TEXT_MAX_LENGTH } from "@/lib/documents/documents";
 import { ANALYSIS_COPY, runAnalyzeDocument } from "@/lib/analysis/run";
+import { ANALYSIS_SCHEMA_NAME } from "@/lib/analysis/prompt";
 import { ModelConfigError, ModelError, type ModelClient } from "@/lib/model/client";
+import type { RedLineStore } from "@/lib/red-lines/red-lines";
+import { fakeRedLineStore, redLineRow } from "../support/fake-red-line-store";
+import { sidecarRedLines } from "../support/red-lines";
 import { expectCitationsVerbatim } from "../support/citations";
 import { loadFixture } from "../support/fixtures";
-import { stubModel, type StubFaults } from "../support/stub-model";
+import { redLinesIn, stubModel, type StubFaults } from "../support/stub-model";
 
 const adhesion = loadFixture("adhesion-contract");
 
 function deps(model: () => ModelClient) {
   const logs: string[] = [];
-  return { deps: { model, log: (message: string) => logs.push(message) }, logs };
+  return { deps: { model, redLineStore: null, log: (message: string) => logs.push(message) }, logs };
 }
 
 describe("runAnalyzeDocument input", () => {
@@ -98,5 +102,77 @@ describe("runAnalyzeDocument errors", () => {
     const { deps: d } = deps(() => stubModel(faults));
     const state = await runAnalyzeDocument({ text: adhesion.text }, d);
     expect(state).toMatchObject({ status: "error", reason });
+  });
+});
+
+describe("runAnalyzeDocument red lines", () => {
+  const storeRows = sidecarRedLines(adhesion).map((r) => redLineRow(r.text));
+
+  function withStore(store: RedLineStore | null, model = stubModel()) {
+    return { model, deps: { model: () => model, redLineStore: store, log: () => {} } };
+  }
+
+  function sentRedLines(model: ReturnType<typeof stubModel>) {
+    return redLinesIn(model.requests.find((r) => r.name === ANALYSIS_SCHEMA_NAME)!);
+  }
+
+  it("uses only the store's red lines and ignores any sent from the client", async () => {
+    const store = fakeRedLineStore({ rows: storeRows });
+    const { model, deps: d } = withStore(store);
+    const hostile = {
+      text: adhesion.text,
+      redLines: [{ id: "evil", text: "Anything that stops me working with other clients" }],
+      redLineIds: ["evil"],
+    };
+    const state = await runAnalyzeDocument(hostile, d);
+    if (state.status !== "analyzed") throw new Error(`expected an analysis, got ${state.status}`);
+
+    expect(sentRedLines(model).map((r) => r.text)).toEqual(storeRows.map((r) => r.text));
+    expect(state.redLines).toEqual({ status: "loaded", count: 3 });
+    expect(state.analysis.redLineMatches.map((m) => m.redLine.id).sort()).toEqual(storeRows.map((r) => r.id).sort());
+    expect(state.analysis.redLineMatches.some((m) => m.redLine.id === "evil")).toBe(false);
+    expectCitationsVerbatim(adhesion.text, state.analysis);
+    expect(JSON.parse(JSON.stringify(state))).toEqual(state);
+  });
+
+  it("runs with no red lines when the client sends some but the user has none", async () => {
+    const { model, deps: d } = withStore(fakeRedLineStore({ rows: [] }));
+    const state = await runAnalyzeDocument({ text: adhesion.text, redLines: storeRows }, d);
+    expect(sentRedLines(model)).toEqual([]);
+    expect(state).toMatchObject({ status: "analyzed", redLines: { status: "loaded", count: 0 } });
+  });
+
+  it.each<[string, RedLineStore | null, string]>([
+    ["signed out", fakeRedLineStore({ userId: null, rows: storeRows }), "signed-out"],
+    ["Supabase isn't configured", null, "unavailable"],
+    ["the red lines can't be read", fakeRedLineStore({ listFails: true, rows: storeRows }), "failed"],
+  ])("still analyses with no red lines when %s, and says why", async (_label, store, status) => {
+    const { model, deps: d } = withStore(store);
+    const state = await runAnalyzeDocument({ text: adhesion.text, redLines: storeRows }, d);
+    expect(sentRedLines(model)).toEqual([]);
+    expect(state).toMatchObject({ status: "analyzed", redLines: { status } });
+    if (state.status === "analyzed") {
+      expect(state.analysis.redLineMatches).toEqual([]);
+      expect(state.analysis.flags).toHaveLength(8);
+    }
+  });
+
+  it("still analyses when reading the red lines throws", async () => {
+    const store = fakeRedLineStore({ rows: storeRows });
+    store.listForUser = async () => {
+      throw new Error("connection reset");
+    };
+    const logs: string[] = [];
+    const model = stubModel();
+    const state = await runAnalyzeDocument({ text: adhesion.text }, { model: () => model, redLineStore: store, log: (m) => logs.push(m) });
+    expect(state).toMatchObject({ status: "analyzed", redLines: { status: "failed" } });
+    expect(logs.join("\n")).toContain("connection reset");
+  });
+
+  it("doesn't read red lines for input it rejects", async () => {
+    const store = fakeRedLineStore({ rows: storeRows });
+    const { deps: d } = withStore(store);
+    await runAnalyzeDocument({ text: "  " }, d);
+    expect(store.lists).toBe(0);
   });
 });

@@ -1,4 +1,5 @@
 import { TEXT_MAX_LENGTH } from "@/lib/documents/documents";
+import { loadRedLinesForAnalysis, type RedLineStore, type RedLinesForAnalysis } from "@/lib/red-lines/red-lines";
 import { ModelConfigError, type ModelClient } from "@/lib/model/client";
 import { AnalysisError, analyzeDocument } from "./analyze";
 import { ANALYSIS_COPY } from "./copy";
@@ -7,20 +8,36 @@ import type { Analysis } from "./types";
 export { ANALYSIS_COPY } from "./copy";
 
 /**
- * The server action's own logic, with the model injected. The action is
- * public: it works signed out and with Supabase absent, and stores nothing.
+ * The server action's own logic, with the model and the red lines store
+ * injected. The action is public: it works signed out and with Supabase
+ * absent, and stores nothing.
  */
 
 export type AnalyzeFailure = "not-configured" | "model-failed" | "invalid-output";
 
+/**
+ * Which red lines the analysis ran with, as the result screen needs to know:
+ * how many were checked, or why none were.
+ */
+export type RedLinesUsed =
+  | { status: "loaded"; count: number }
+  | { status: "signed-out" }
+  | { status: "unavailable" }
+  | { status: "failed" };
+
 export type AnalyzeState =
-  | { status: "analyzed"; analysis: Analysis }
+  | { status: "analyzed"; analysis: Analysis; redLines: RedLinesUsed }
   | { status: "invalid"; message: string }
   | { status: "error"; reason: AnalyzeFailure; message: string };
 
 export interface RunAnalyzeDeps {
   /** Build the model client. Throws `ModelConfigError` when the key or model is missing. */
   model: () => ModelClient;
+  /**
+   * The signed-in user's red lines, read on the server. Null when Supabase
+   * isn't configured. Red lines in the payload are never used.
+   */
+  redLineStore: RedLineStore | null;
   /** Where failures are reported for whoever runs the server. Defaults to console.error. */
   log?: (message: string) => void;
 }
@@ -53,9 +70,11 @@ export async function runAnalyzeDocument(input: unknown, deps: RunAnalyzeDeps): 
     return { status: "error", reason: "model-failed", message: ANALYSIS_COPY.modelFailed };
   }
 
+  const loaded = await loadRedLinesSafely(deps.redLineStore, log);
+
   try {
-    const analysis = await analyzeDocument(validation.text, { model, log });
-    return { status: "analyzed", analysis };
+    const analysis = await analyzeDocument(validation.text, loaded.redLines, { model, log });
+    return { status: "analyzed", analysis, redLines: redLinesUsed(loaded) };
   } catch (error) {
     if (error instanceof AnalysisError && error.kind === "invalid-output") {
       log(`[analyze] ${error.message}`);
@@ -65,6 +84,22 @@ export async function runAnalyzeDocument(input: unknown, deps: RunAnalyzeDeps): 
     log(`[analyze] model call failed: ${describe(cause)}`);
     return { status: "error", reason: "model-failed", message: ANALYSIS_COPY.modelFailed };
   }
+}
+
+/** A failed read of the red lines shouldn't stop the document being read. */
+async function loadRedLinesSafely(store: RedLineStore | null, log: (message: string) => void): Promise<RedLinesForAnalysis> {
+  try {
+    const loaded = await loadRedLinesForAnalysis(store);
+    if (loaded.status === "failed") log("[analyze] could not load the user's red lines; analysing without them");
+    return loaded;
+  } catch (error) {
+    log(`[analyze] could not load the user's red lines: ${describe(error)}`);
+    return { status: "failed", redLines: [] };
+  }
+}
+
+function redLinesUsed(loaded: RedLinesForAnalysis): RedLinesUsed {
+  return loaded.status === "loaded" ? { status: "loaded", count: loaded.redLines.length } : { status: loaded.status };
 }
 
 function describe(error: unknown): string {

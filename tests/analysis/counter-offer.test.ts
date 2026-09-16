@@ -34,7 +34,7 @@ async function analyze(name: FixtureName, faults: StubFaults = {}): Promise<Run>
   const model = stubModel(faults);
   const logs: string[] = [];
   const deps: AnalyzeDeps = { model, log: (message) => logs.push(message) };
-  const analysis = await analyzeDocument(fixture.text, deps);
+  const analysis = await analyzeDocument(fixture.text, [], deps);
   expectCitationsVerbatim(
     fixture.text,
     analysis.flags.map((flag) => flag.citation),

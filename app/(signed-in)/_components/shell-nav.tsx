@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 /** Screens that exist today. Later tickets add theirs here. */
 const SCREENS = [
   { href: "/library", label: "Library" },
+  { href: "/red-lines", label: "Red lines" },
   { href: "/analyze", label: "Check a document" },
 ] as const;
 

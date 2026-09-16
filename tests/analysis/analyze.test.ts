@@ -20,11 +20,8 @@ const planted = (id: string) => {
 /** Run the real analysis against a fixture, and check citation integrity on every result. */
 async function analyze(name: FixtureName, faults: StubFaults = {}): Promise<Analysis> {
   const fixture = loadFixture(name);
-  const analysis = await analyzeDocument(fixture.text, { model: stubModel(faults) });
-  expectCitationsVerbatim(
-    fixture.text,
-    analysis.flags.map((flag) => flag.citation),
-  );
+  const analysis = await analyzeDocument(fixture.text, [], { model: stubModel(faults) });
+  expectCitationsVerbatim(fixture.text, analysis);
   return analysis;
 }
 
@@ -135,7 +132,14 @@ describe("clean document", () => {
       rationalesReplaced: 0,
       counterOffersDrafted: 0,
       counterOffersUnavailable: 0,
+      redLineMatchesProposed: 0,
+      redLineMatchesKept: 0,
+      redLineMatchesDroppedNoSource: 0,
+      redLineMatchesDroppedInvalid: 0,
+      redLineMatchesDroppedDuplicate: 0,
+      redLineExplanationsReplaced: 0,
     });
+    expect(analysis.redLineMatches).toEqual([]);
   });
 });
 
@@ -247,7 +251,7 @@ describe("validation of model output", () => {
 
   it("sends the document text to the model unchanged", async () => {
     const model = stubModel();
-    await analyzeDocument(adhesion.text, { model });
+    await analyzeDocument(adhesion.text, [], { model });
     expect(model.lastFixture?.name).toBe("adhesion-contract");
     expect(model.requests.filter((request) => request.name === ANALYSIS_SCHEMA_NAME)).toHaveLength(1);
   });

@@ -156,18 +156,39 @@ export interface RationaleCheck {
 }
 
 export function checkRationale(rationale: string, quote: string): RationaleCheck {
-  const available = new Set(figuresIn(quote));
+  return checkSupport(rationale, [quote]);
+}
+
+/**
+ * The same check for a red-line match's explanation. Its figures and quoted
+ * phrases may come from the cited clause or from the reader's own red line
+ * ("later than 30 days" is the reader's figure, not an invented one), and
+ * from nowhere else.
+ */
+export function checkRedLineExplanation(explanation: string, quote: string, redLineText: string): RationaleCheck {
+  return checkSupport(explanation, [quote, redLineText]);
+}
+
+function checkSupport(claim: string, sources: readonly string[]): RationaleCheck {
+  const available = new Set(sources.flatMap(figuresIn));
   const unsupported: string[] = [];
 
-  for (const value of figuresIn(rationale)) {
+  for (const value of figuresIn(claim)) {
     if (!available.has(value)) unsupported.push(String(value));
   }
-  const haystack = collapseWhitespace(quote);
-  for (const phrase of quotedPhrasesIn(rationale)) {
-    if (!haystack.includes(collapseWhitespace(phrase))) unsupported.push(`"${phrase}"`);
+  const haystacks = sources.map(collapseWhitespace);
+  for (const phrase of quotedPhrasesIn(claim)) {
+    const wanted = collapseWhitespace(phrase);
+    if (!haystacks.some((haystack) => haystack.includes(wanted))) unsupported.push(`"${phrase}"`);
   }
   return { supported: unsupported.length === 0, unsupported };
 }
+
+/**
+ * The explanation used when the model's own one asserted something the quote
+ * and the red line don't support. It says only that the sentence matches.
+ */
+export const FALLBACK_RED_LINE_EXPLANATION = "This sentence matches your red line.";
 
 /**
  * The rationale used when the model's own one asserted something the quote

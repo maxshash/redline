@@ -2,7 +2,10 @@ import {
   COUNTER_OFFER_FLAGS_END,
   COUNTER_OFFER_FLAGS_START,
   COUNTER_OFFER_SCHEMA_NAME,
+  RED_LINES_END,
+  RED_LINES_START,
   type CounterOfferRequestFlag,
+  type RedLineRequestEntry,
 } from "@/lib/analysis/prompt";
 import type { JsonRequest, ModelClient } from "@/lib/model/client";
 import { FIXTURE_NAMES, loadFixture, type Fixture, type PlantedClause } from "./fixtures";
@@ -29,7 +32,16 @@ export interface StubFaults {
   /** Leave these clauses out of the payload entirely. */
   omit?: string[];
   /** Replace the whole payload. */
-  output?: "not-json" | "no-summary" | "no-flags";
+  output?: "not-json" | "no-summary" | "no-flags" | "no-red-line-matches";
+
+  /** Red-line matches: add a match naming a red line id that wasn't sent. */
+  redLineUnknownId?: boolean;
+  /** Red-line matches: add a match for the first red line sent, quoting a sentence that isn't in the document. */
+  redLineFabricatedQuote?: boolean;
+  /** Red-line matches: give the match for this red line (by its text) an explanation with a figure nobody wrote. */
+  redLineInventedFigure?: string;
+  /** Red-line matches: return the match for this red line (by its text) twice. */
+  redLineDuplicate?: string;
   /** Throw instead of answering. */
   throws?: boolean;
 
@@ -61,6 +73,11 @@ export interface StubModel extends ModelClient {
  * it was sent by finding the fixture's text in the request, never by reading
  * the prompt's wording, then answers with that sidecar's summary and one flag
  * per planted clause, in sidecar order (which is not document order).
+ *
+ * It answers red-line matches from the sidecar's `redLineCases`: it reads the
+ * red lines out of the request's delimited JSON block and, for each one whose
+ * text is a sidecar case, returns that case's matching sentence under the id
+ * it was sent. Red lines it doesn't know get no match.
  *
  * It tells the counter-offer request from the analysis request by the JSON
  * schema name, and answers it with the sidecar's `counterOffer` for each flag
@@ -115,12 +132,50 @@ export function stubModel(faults: StubFaults = {}): StubModel {
         });
       }
 
-      if (faults.output === "no-summary") return { flags };
-      if (faults.output === "no-flags") return { summary: fixture.sidecar.summary };
-      return { summary: fixture.sidecar.summary, flags };
+      const redLineMatches = answerRedLines(fixture, request, faults);
+
+      if (faults.output === "no-summary") return { flags, redLineMatches };
+      if (faults.output === "no-flags") return { summary: fixture.sidecar.summary, redLineMatches };
+      if (faults.output === "no-red-line-matches") return { summary: fixture.sidecar.summary, flags };
+      return { summary: fixture.sidecar.summary, flags, redLineMatches };
     },
   };
   return stub;
+}
+
+/** The red lines an analysis request sent to the model. */
+export function redLinesIn(request: JsonRequest): RedLineRequestEntry[] {
+  const start = request.user.lastIndexOf(RED_LINES_START);
+  const end = request.user.lastIndexOf(RED_LINES_END);
+  if (start === -1 || end < start) throw new Error("stub model: the analysis request carried no red lines block");
+  return JSON.parse(request.user.slice(start + RED_LINES_START.length, end)) as RedLineRequestEntry[];
+}
+
+/** The explanation the stub gives a match. It asserts no figures. */
+export const STUB_MATCH_EXPLANATION = "This clause is about what the red line names.";
+
+function answerRedLines(fixture: Fixture, request: JsonRequest, faults: StubFaults) {
+  const sent = redLinesIn(request);
+  const matches: { redLineId: string; quote: string; explanation: string }[] = [];
+  for (const redLine of sent) {
+    const found = fixture.sidecar.redLineCases.find((c) => c.redLine === redLine.text);
+    if (!found) continue;
+    const match = { redLineId: redLine.redLineId, quote: found.matchingSentence, explanation: STUB_MATCH_EXPLANATION };
+    if (faults.redLineInventedFigure === redLine.text) {
+      if (/\b90\b|ninety/i.test(found.matchingSentence + redLine.text)) throw new Error("stub model: pick another invented figure");
+      match.explanation = "That leaves you exposed for about 90 days.";
+    }
+    matches.push(match);
+    if (faults.redLineDuplicate === redLine.text) matches.push({ ...match });
+  }
+  if (faults.redLineUnknownId) {
+    const known = fixture.sidecar.redLineCases[0];
+    matches.push({ redLineId: "red-line-999", quote: known.matchingSentence, explanation: STUB_MATCH_EXPLANATION });
+  }
+  if (faults.redLineFabricatedQuote && sent.length > 0) {
+    matches.push({ redLineId: sent[0].redLineId, quote: FABRICATED_QUOTE, explanation: STUB_MATCH_EXPLANATION });
+  }
+  return matches;
 }
 
 /** The flags a counter-offer request sent to the model. */

@@ -76,6 +76,38 @@ export interface Verification {
   counterOffersDrafted: number;
   /** Kept flags whose counter-offer couldn't be drafted. */
   counterOffersUnavailable: number;
+
+  /** Red-line matches the model proposed. */
+  redLineMatchesProposed: number;
+  /** Red-line matches that survived and are in `Analysis.redLineMatches`. */
+  redLineMatchesKept: number;
+  /** Proposed matches whose quote isn't in the document. */
+  redLineMatchesDroppedNoSource: number;
+  /** Proposed matches missing a field or naming a red line that wasn't sent. */
+  redLineMatchesDroppedInvalid: number;
+  /** Proposed matches for a red line and span another kept match already has. */
+  redLineMatchesDroppedDuplicate: number;
+  /** Kept matches whose explanation asserted something the quote and red line don't contain. */
+  redLineExplanationsReplaced: number;
+}
+
+/** A red line as the analysis received it: the reader's own words. */
+export interface RedLineRef {
+  readonly id: string;
+  readonly text: string;
+}
+
+/**
+ * A clause reported because it is about one of the reader's red lines
+ * (ADR 0007). It holds a `Citation`, so it can't exist without a verified
+ * source, and it has no severity: it is a separate signal from flags, never
+ * merged with them and never a reason to change a flag's tier.
+ */
+export interface RedLineMatch {
+  redLine: RedLineRef;
+  citation: Citation;
+  /** One plain sentence on how the clause relates to the red line. */
+  explanation: string;
 }
 
 export interface Analysis {
@@ -83,5 +115,7 @@ export interface Analysis {
   summary: string;
   /** Critical, then serious, then worth noting; within a tier, in document order. */
   flags: FlagWithCounterOffer[];
+  /** Matches against the reader's red lines, in document order. Independent of `flags`. */
+  redLineMatches: RedLineMatch[];
   verification: Verification;
 }

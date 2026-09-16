@@ -6,7 +6,7 @@ import { ANALYSIS_COPY } from "@/lib/analysis/copy";
 import { DocumentFacts, type AnalysisRun } from "./document-facts";
 import { DocumentIntake } from "./document-intake";
 import { KeepDocument } from "./keep-document";
-import { SourceText, type Selection } from "./source-text";
+import { SourceText, type FindingKey, type Selection } from "./source-text";
 
 /** Whether this visitor can keep documents, decided on the server. */
 export type Keeping = "signed-in" | "signed-out" | "unavailable";
@@ -53,7 +53,7 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
       const state = await analyzeDocumentText({ text });
       next =
         state.status === "analyzed"
-          ? { status: "done", analysis: state.analysis }
+          ? { status: "done", analysis: state.analysis, redLines: state.redLines }
           : { status: "failed", message: state.message };
     } catch {
       next = { status: "failed", message: ANALYSIS_COPY.modelFailed };
@@ -66,7 +66,8 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
   }
 
   const flags = run.status === "done" ? run.analysis.flags : [];
-  const select = (index: number) => setSelection((previous) => ({ index, request: (previous?.request ?? 0) + 1 }));
+  const matches = run.status === "done" ? run.analysis.redLineMatches : [];
+  const select = (key: FindingKey) => setSelection((previous) => ({ key, request: (previous?.request ?? 0) + 1 }));
 
   const origin = document.source.kind === "file" ? `From ${document.source.name}` : "Pasted text";
 
@@ -96,7 +97,7 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
         <DocumentFacts
           run={run}
           onStart={() => void startAnalysis(document.text)}
-          activeIndex={selection?.index ?? null}
+          activeKey={selection?.key ?? null}
           onSelect={select}
         />
 
@@ -113,6 +114,7 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
       <SourceText
         text={document.text}
         flags={flags}
+        matches={matches}
         selection={selection}
         onSelect={select}
         className="lg:sticky lg:top-5 lg:col-span-5"

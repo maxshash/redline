@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { Flag, SeverityTier } from "@/lib/analysis/types";
+import { groupRedLineMatches } from "@/lib/analysis/red-line-groups";
+import type { Flag, RedLineMatch, SeverityTier } from "@/lib/analysis/types";
 
 /** In the document, a cited span carries its own tier's device (DESIGN.md). */
 const MARK_TIER: Record<SeverityTier, string> = {
@@ -16,9 +17,15 @@ const OUTLINE_TIER: Record<SeverityTier, string> = {
   "worth-noting": "outline-ink",
 };
 
+/**
+ * What can be selected: a flag, or a red-line match shown on its own. A match
+ * that overlaps a flag is shown on that flag, so selecting it selects the flag.
+ */
+export type FindingKey = `flag-${number}` | `match-${number}`;
+
 export interface Selection {
-  index: number;
-  /** Changes on every selection, so choosing the same flag again scrolls again. */
+  key: FindingKey;
+  /** Changes on every selection, so choosing the same finding again scrolls again. */
   request: number;
 }
 
@@ -26,16 +33,20 @@ interface Segment {
   start: number;
   end: number;
   /** Indexes into `flags` of every flag whose citation covers this segment. */
-  covering: number[];
+  flags: number[];
+  /** Indexes into `matches` of every red-line match whose citation covers this segment. */
+  matches: number[];
 }
 
+type Span = { start: number; end: number };
+
 /**
- * Split the text into paragraphs, and each paragraph into runs that are
- * either uncited or covered by the same set of citations. Offsets are the
- * citations' own `start`/`end`, so a mark covers exactly the cited span.
+ * Split the text into paragraphs, and each paragraph into runs covered by the
+ * same flags and red-line matches. Offsets are the citations' own
+ * `start`/`end`, so a mark covers exactly the cited span.
  */
-function paragraphSegments(text: string, flags: readonly Flag[]): Segment[][] {
-  const paragraphs: { start: number; end: number }[] = [];
+function paragraphSegments(text: string, flags: readonly Span[], matches: readonly Span[]): Segment[][] {
+  const paragraphs: Span[] = [];
   let cursor = 0;
   for (const gap of text.matchAll(/\n{2,}/g)) {
     paragraphs.push({ start: cursor, end: gap.index });
@@ -43,18 +54,20 @@ function paragraphSegments(text: string, flags: readonly Flag[]): Segment[][] {
   }
   paragraphs.push({ start: cursor, end: text.length });
 
+  const covering = (spans: readonly Span[], a: number, b: number) =>
+    spans.flatMap((span, index) => (span.start < b && span.end > a ? [index] : []));
+
   return paragraphs.map(({ start, end }) => {
     const cuts = new Set([start, end]);
-    for (const flag of flags) {
-      if (flag.citation.start > start && flag.citation.start < end) cuts.add(flag.citation.start);
-      if (flag.citation.end > start && flag.citation.end < end) cuts.add(flag.citation.end);
+    for (const span of [...flags, ...matches]) {
+      if (span.start > start && span.start < end) cuts.add(span.start);
+      if (span.end > start && span.end < end) cuts.add(span.end);
     }
     const points = [...cuts].sort((a, b) => a - b);
     const segments: Segment[] = [];
     for (let i = 0; i < points.length - 1; i++) {
       const [a, b] = [points[i], points[i + 1]];
-      const covering = flags.flatMap((flag, index) => (flag.citation.start < b && flag.citation.end > a ? [index] : []));
-      segments.push({ start: a, end: b, covering });
+      segments.push({ start: a, end: b, flags: covering(flags, a, b), matches: covering(matches, a, b) });
     }
     return segments;
   });
@@ -63,32 +76,45 @@ function paragraphSegments(text: string, flags: readonly Flag[]): Segment[][] {
 /**
  * The extracted text, shown exactly as it was analysed. It is the source
  * document's own voice, so it is set in Tinos (DESIGN.md, the Three-Voice
- * Rule). Once there are flags, each cited span is marked, and selecting a
- * mark selects its flag.
+ * Rule). Each flag's span carries its tier's underline; each red-line match's
+ * span carries the dashed overprint underline on an inner span, so a sentence
+ * that is both shows both. Selecting a mark selects its finding.
  */
 export function SourceText({
   text,
   flags = [],
+  matches = [],
   selection = null,
   onSelect,
   className = "",
 }: {
   text: string;
   flags?: readonly Flag[];
+  matches?: readonly RedLineMatch[];
   selection?: Selection | null;
-  onSelect?: (index: number) => void;
+  onSelect?: (key: FindingKey) => void;
   className?: string;
 }) {
   const panelRef = useRef<HTMLElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const markRefs = useRef<Map<number, HTMLElement>>(new Map());
-  const paragraphs = paragraphSegments(text, flags);
-  const activeIndex = selection?.index ?? null;
+  const markRefs = useRef<Map<FindingKey, HTMLElement>>(new Map());
+  const paragraphs = paragraphSegments(
+    text,
+    flags.map((flag) => flag.citation),
+    matches.map((match) => match.citation),
+  );
+  const groups = groupRedLineMatches(flags, matches);
+  const activeKey = selection?.key ?? null;
+
+  const matchTarget = (m: number): FindingKey => {
+    const flag = groups.onFlag.findIndex((onThisFlag) => onThisFlag.includes(m));
+    return flag === -1 ? `match-${m}` : `flag-${flag}`;
+  };
 
   useEffect(() => {
     if (!selection) return;
     const container = scrollRef.current;
-    const mark = markRefs.current.get(selection.index);
+    const mark = markRefs.current.get(selection.key);
     if (!container || !mark) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -104,12 +130,19 @@ export function SourceText({
     container.scrollTo({ top: Math.max(0, top), behavior });
   }, [selection]);
 
-  const firstSegment = new Map<number, string>();
+  // The keys each segment is part of, and the first segment for each key (where selecting scrolls to).
+  const keysOf = (segment: Segment): FindingKey[] => [
+    ...segment.flags.map((f): FindingKey => `flag-${f}`),
+    ...segment.matches.filter((m) => groups.onTheirOwn.includes(m)).map((m): FindingKey => `match-${m}`),
+  ];
+  const firstSegment = new Map<FindingKey, string>();
   paragraphs.forEach((segments, p) =>
     segments.forEach((segment, s) => {
-      for (const index of segment.covering) if (!firstSegment.has(index)) firstSegment.set(index, `${p}:${s}`);
+      for (const key of keysOf(segment)) if (!firstSegment.has(key)) firstSegment.set(key, `${p}:${s}`);
     }),
   );
+
+  const hasFindings = flags.length > 0 || matches.length > 0;
 
   return (
     <article
@@ -119,10 +152,10 @@ export function SourceText({
     >
       <header className="hairline px-5 py-3.5">
         <h2 id="source-text-heading" className="text-[0.9375rem] font-bold uppercase tracking-[0.06em]">
-          {flags.length > 0 ? "The document itself" : "Extracted text"}
+          {hasFindings ? "The document itself" : "Extracted text"}
         </h2>
         <p className="pt-0.5 font-[family-name:var(--font-panel-narrow)] text-[0.8125rem] uppercase tracking-[0.08em] text-ink-soft">
-          {flags.length > 0 ? "Every warning quotes a passage in here" : "What Redline read, word for word"}
+          {hasFindings ? "Every warning and red-line match quotes a passage in here" : "What Redline read, word for word"}
         </p>
       </header>
       <div
@@ -138,16 +171,23 @@ export function SourceText({
           >
             {segments.map((segment, s) => {
               const content = text.slice(segment.start, segment.end);
-              if (segment.covering.length === 0) return <span key={s}>{content}</span>;
+              if (segment.flags.length === 0 && segment.matches.length === 0) return <span key={s}>{content}</span>;
 
-              // Where citations overlap, the selected one wins, then the heaviest.
-              // Flags arrive heaviest first, so the lowest index is the heaviest.
-              const index =
-                activeIndex !== null && segment.covering.includes(activeIndex)
-                  ? activeIndex
-                  : Math.min(...segment.covering);
-              const flag = flags[index];
-              const isActive = index === activeIndex;
+              const keys = keysOf(segment);
+              const targets = [...keys, ...segment.matches.map(matchTarget)];
+              // The selected finding wins, then the heaviest flag (flags arrive
+              // heaviest first), then the first red-line match.
+              const target: FindingKey = activeKey !== null && targets.includes(activeKey) ? activeKey : targets[0];
+              const isActive = activeKey !== null && keys.includes(activeKey);
+
+              const shownFlag =
+                activeKey?.startsWith("flag-") && segment.flags.includes(Number(activeKey.slice(5)))
+                  ? Number(activeKey.slice(5))
+                  : segment.flags.length > 0
+                    ? Math.min(...segment.flags)
+                    : null;
+              const tier = shownFlag === null ? null : flags[shownFlag].severity;
+              const outline = activeKey?.startsWith("flag-") && tier ? OUTLINE_TIER[tier] : "outline-overprint";
               const refKey = `${p}:${s}`;
 
               return (
@@ -157,26 +197,26 @@ export function SourceText({
                   tabIndex={0}
                   aria-pressed={isActive}
                   ref={(node) => {
-                    for (const covered of segment.covering) {
-                      if (firstSegment.get(covered) !== refKey) continue;
-                      if (node) markRefs.current.set(covered, node);
-                      else markRefs.current.delete(covered);
+                    for (const key of keys) {
+                      if (firstSegment.get(key) !== refKey) continue;
+                      if (node) markRefs.current.set(key, node);
+                      else markRefs.current.delete(key);
                     }
                   }}
-                  onClick={() => onSelect?.(index)}
+                  onClick={() => onSelect?.(target)}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
                       event.preventDefault();
-                      onSelect?.(index);
+                      onSelect?.(target);
                     }
                   }}
                   className={[
                     "cursor-pointer underline-offset-[3px]",
-                    MARK_TIER[flag.severity],
-                    isActive ? `outline-2 outline-offset-2 ${OUTLINE_TIER[flag.severity]}` : "hover:bg-panel-field-active",
+                    tier ? MARK_TIER[tier] : "",
+                    isActive ? `outline-2 outline-offset-2 ${outline}` : "hover:bg-panel-field-active",
                   ].join(" ")}
                 >
-                  {content}
+                  {segment.matches.length > 0 ? <span className="mark-redline">{content}</span> : content}
                 </span>
               );
             })}

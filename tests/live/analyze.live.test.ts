@@ -4,6 +4,7 @@ import { modelClientFromEnv } from "@/lib/model/client";
 import { expectCitationsVerbatim } from "../support/citations";
 import { loadFixture } from "../support/fixtures";
 import { plantedClausesFound } from "../support/planted";
+import { redLineCasesFound, sidecarRedLines } from "../support/red-lines";
 
 /**
  * The live eval: the real model through OpenRouter, on both fixtures, against
@@ -16,21 +17,27 @@ try {
   // No .env.local: rely on the environment.
 }
 
+/** Red-line completeness: every sidecar case is matched, with a citation overlapping its sentence. */
+function expectEveryRedLineCaseMatched(fixture: ReturnType<typeof loadFixture>, analysis: Awaited<ReturnType<typeof analyzeDocument>>) {
+  const cases = redLineCasesFound(fixture, sidecarRedLines(fixture), analysis.redLineMatches);
+  const missed = cases.filter((r) => r.matches.length === 0).map((r) => r.redLine.text);
+  console.info(`red-line cases ${cases.length - missed.length}/${cases.length}; missed: ${missed.join(" | ") || "none"}`);
+  expect(missed).toEqual([]);
+}
+
 const hasKey = Boolean(process.env.OPENROUTER_API_KEY?.trim());
 if (!hasKey) {
   console.warn("Live eval skipped: OPENROUTER_API_KEY is not set. Add it to .env.local or the environment to run it.");
 }
 
 describe.skipIf(!hasKey)("analyzeDocument against the real model", () => {
-  it("adhesion contract: every citation verbatim, and at least 80% of planted critical and serious clauses flagged", async () => {
+  it("adhesion contract: every citation verbatim, at least 80% of planted critical and serious clauses flagged, every red-line case matched", async () => {
     const fixture = loadFixture("adhesion-contract");
-    const analysis = await analyzeDocument(fixture.text, { model: modelClientFromEnv() });
+    const analysis = await analyzeDocument(fixture.text, sidecarRedLines(fixture), { model: modelClientFromEnv() });
     console.info("adhesion-contract verification", analysis.verification);
 
-    expectCitationsVerbatim(
-      fixture.text,
-      analysis.flags.map((flag) => flag.citation),
-    );
+    expectCitationsVerbatim(fixture.text, analysis);
+    expectEveryRedLineCaseMatched(fixture, analysis);
     expect(analysis.summary.length).toBeGreaterThan(0);
 
     const heavy = plantedClausesFound(fixture, analysis.flags).filter(
@@ -42,15 +49,13 @@ describe.skipIf(!hasKey)("analyzeDocument against the real model", () => {
     expect(found.length / heavy.length).toBeGreaterThanOrEqual(0.8);
   });
 
-  it("clean agreement: every citation verbatim, and no critical or serious flags", async () => {
+  it("clean agreement: every citation verbatim, every red-line case matched, and still no critical or serious flags", async () => {
     const fixture = loadFixture("clean-agreement");
-    const analysis = await analyzeDocument(fixture.text, { model: modelClientFromEnv() });
+    const analysis = await analyzeDocument(fixture.text, sidecarRedLines(fixture), { model: modelClientFromEnv() });
     console.info("clean-agreement verification", analysis.verification);
 
-    expectCitationsVerbatim(
-      fixture.text,
-      analysis.flags.map((flag) => flag.citation),
-    );
+    expectCitationsVerbatim(fixture.text, analysis);
+    expectEveryRedLineCaseMatched(fixture, analysis);
     expect(analysis.summary.length).toBeGreaterThan(0);
     const heavy = analysis.flags.filter((flag) => flag.severity !== "worth-noting");
     expect(

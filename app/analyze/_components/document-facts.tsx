@@ -1,15 +1,26 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AXIS_LABEL, TIER_LABEL, clauseLabel } from "@/lib/analysis/labels";
-import type { Analysis, CounterOffer, Flag, FlagWithCounterOffer, SeverityTier } from "@/lib/analysis/types";
+import { groupRedLineMatches } from "@/lib/analysis/red-line-groups";
+import type { RedLinesUsed } from "@/lib/analysis/run";
+import type {
+  Analysis,
+  CounterOffer,
+  Flag,
+  FlagWithCounterOffer,
+  RedLineMatch,
+  SeverityTier,
+} from "@/lib/analysis/types";
+import type { FindingKey } from "./source-text";
 
 /** What the page knows about the analysis of the document in hand. */
 export type AnalysisRun =
   | { status: "idle" }
   | { status: "running" }
   | { status: "failed"; message: string }
-  | { status: "done"; analysis: Analysis };
+  | { status: "done"; analysis: Analysis; redLines: RedLinesUsed };
 
 /** Severity is rule weight; Critical is the only tier with colour (DESIGN.md). */
 const TIER_RULE: Record<SeverityTier, string> = {
@@ -54,6 +65,25 @@ export const FACTS_COPY = {
   copyLabel: "Copy the suggested wording",
   copied: "Copied",
   copyFailed: "Couldn't copy. Select the text and copy it by hand.",
+  redLinesHeading: "Your red lines",
+  redLineStamp: "Your red line",
+  redLineLabel: "You asked about this",
+  redLineNoTier: "No severity tier",
+  redLineCount: (count: number) => (count === 1 ? "1 match" : `${count} matches`),
+  redLinesNoneMatched: (count: number) =>
+    count === 1
+      ? "Your red line doesn't come up in this document."
+      : `None of your ${count} red lines come up in this document.`,
+  redLinesAllOnWarnings: "Each match is on one of the warnings above.",
+  redLinesSomeOnWarnings: (count: number) =>
+    count === 1 ? "One more match is on a warning above." : `${count} more matches are on warnings above.`,
+  redLinesEmptyList: "You haven't added any red lines yet.",
+  redLinesEmptyListLink: "Add some",
+  redLinesEmptyListAfter: "and Redline will look for them next time.",
+  redLinesSignedOut: "to add your own red lines.",
+  redLinesSignIn: "Sign in",
+  redLinesUnavailable: "Red lines need an account, and accounts aren't open yet.",
+  redLinesFailed: "Couldn't load your red lines, so this check didn't look for them.",
 } as const;
 
 function tierCounts(flags: readonly Flag[]): string {
@@ -72,13 +102,13 @@ function printDelay(ms: number) {
 export function DocumentFacts({
   run,
   onStart,
-  activeIndex,
+  activeKey,
   onSelect,
 }: {
   run: AnalysisRun;
   onStart: () => void;
-  activeIndex: number | null;
-  onSelect: (index: number) => void;
+  activeKey: FindingKey | null;
+  onSelect: (key: FindingKey) => void;
 }) {
   return (
     <div className="px-5 pb-6 pt-5 sm:px-7">
@@ -117,7 +147,7 @@ export function DocumentFacts({
         )}
 
         {run.status === "done" && (
-          <AnalysisResult analysis={run.analysis} activeIndex={activeIndex} onSelect={onSelect} />
+          <AnalysisResult analysis={run.analysis} redLines={run.redLines} activeKey={activeKey} onSelect={onSelect} />
         )}
       </div>
     </div>
@@ -126,14 +156,17 @@ export function DocumentFacts({
 
 function AnalysisResult({
   analysis,
-  activeIndex,
+  redLines,
+  activeKey,
   onSelect,
 }: {
   analysis: Analysis;
-  activeIndex: number | null;
-  onSelect: (index: number) => void;
+  redLines: RedLinesUsed;
+  activeKey: FindingKey | null;
+  onSelect: (key: FindingKey) => void;
 }) {
-  const { flags } = analysis;
+  const { flags, redLineMatches } = analysis;
+  const groups = groupRedLineMatches(flags, redLineMatches);
   const clean = !flags.some((flag) => flag.severity === "critical" || flag.severity === "serious");
 
   return (
@@ -171,8 +204,9 @@ function AnalysisResult({
                 <li key={`${flag.citation.start}:${flag.citation.end}`} className={i > 0 ? "pt-5" : undefined}>
                   <FlagBlock
                     flag={flag}
-                    active={activeIndex === i}
-                    onSelect={() => onSelect(i)}
+                    matches={groups.onFlag[i].map((m) => redLineMatches[m])}
+                    active={activeKey === `flag-${i}`}
+                    onSelect={() => onSelect(`flag-${i}`)}
                     delay={Math.min(280 + i * 90, 1000)}
                   />
                 </li>
@@ -181,17 +215,165 @@ function AnalysisResult({
           </>
         )}
       </section>
+
+      <RedLinesSection
+        redLines={redLines}
+        matches={redLineMatches}
+        onTheirOwn={groups.onTheirOwn}
+        activeKey={activeKey}
+        onSelect={onSelect}
+        firstDelay={Math.min(280 + flags.length * 90, 1000)}
+      />
     </>
+  );
+}
+
+const quietClass = "max-w-[62ch] text-[0.9375rem] leading-[1.55] text-ink-soft";
+const quietLinkClass = "font-bold text-ink underline decoration-1 underline-offset-[3px] hover:decoration-[3px]";
+
+/**
+ * Red-line matches: "you asked about this", separate from "Redline judged this
+ * dangerous" (ADR 0007). Matches on a warning are stamped on that warning;
+ * the rest are listed here, each with its full citation and no tier.
+ */
+function RedLinesSection({
+  redLines,
+  matches,
+  onTheirOwn,
+  activeKey,
+  onSelect,
+  firstDelay,
+}: {
+  redLines: RedLinesUsed;
+  matches: readonly RedLineMatch[];
+  onTheirOwn: readonly number[];
+  activeKey: FindingKey | null;
+  onSelect: (key: FindingKey) => void;
+  firstDelay: number;
+}) {
+  if (redLines.status !== "loaded" || redLines.count === 0) {
+    return (
+      <p className={`${quietClass} mt-6 border-t border-ink pt-3`}>
+        {redLines.status === "signed-out" && (
+          <>
+            <Link href="/sign-in?next=%2Fred-lines" className={quietLinkClass}>
+              {FACTS_COPY.redLinesSignIn}
+            </Link>{" "}
+            {FACTS_COPY.redLinesSignedOut}
+          </>
+        )}
+        {redLines.status === "unavailable" && FACTS_COPY.redLinesUnavailable}
+        {redLines.status === "failed" && FACTS_COPY.redLinesFailed}
+        {redLines.status === "loaded" && (
+          <>
+            {FACTS_COPY.redLinesEmptyList}{" "}
+            <Link href="/red-lines" className={quietLinkClass}>
+              {FACTS_COPY.redLinesEmptyListLink}
+            </Link>
+            , {FACTS_COPY.redLinesEmptyListAfter}
+          </>
+        )}
+      </p>
+    );
+  }
+
+  const onWarnings = matches.length - onTheirOwn.length;
+
+  return (
+    <section className="mt-6">
+      <div className="barline-thin" />
+      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 pt-3">
+        <h3 className="text-[1.125rem] font-extrabold uppercase tracking-[0.04em]">{FACTS_COPY.redLinesHeading}</h3>
+        <p className={`tabular ${narrowClass}`}>{FACTS_COPY.redLineCount(matches.length)}</p>
+      </div>
+
+      {matches.length === 0 && <p className={bodyClass}>{FACTS_COPY.redLinesNoneMatched(redLines.count)}</p>}
+      {matches.length > 0 && onTheirOwn.length === 0 && <p className={bodyClass}>{FACTS_COPY.redLinesAllOnWarnings}</p>}
+
+      {onTheirOwn.length > 0 && (
+        <>
+          <ul className="pt-4">
+            {onTheirOwn.map((m, i) => (
+              <li key={`${matches[m].redLine.id}:${matches[m].citation.start}`} className={i > 0 ? "pt-5" : undefined}>
+                <RedLineMatchBlock
+                  match={matches[m]}
+                  active={activeKey === `match-${m}`}
+                  onSelect={() => onSelect(`match-${m}`)}
+                  delay={Math.min(firstDelay + i * 90, 1000)}
+                />
+              </li>
+            ))}
+          </ul>
+          {onWarnings > 0 && <p className={`${bodyClass} pt-4`}>{FACTS_COPY.redLinesSomeOnWarnings(onWarnings)}</p>}
+        </>
+      )}
+    </section>
+  );
+}
+
+/** A red-line match with no warning under it: the overprint's own dashed rule, never a severity rule. */
+function RedLineMatchBlock({
+  match,
+  active,
+  onSelect,
+  delay,
+}: {
+  match: RedLineMatch;
+  active: boolean;
+  onSelect: () => void;
+  delay: number;
+}) {
+  return (
+    <div className="print-set rule-redline" style={printDelay(delay)}>
+      <button
+        type="button"
+        onClick={onSelect}
+        aria-pressed={active}
+        className={`block w-full cursor-pointer px-4 py-4 text-left transition-colors ${
+          active ? "bg-panel-field-active" : "hover:bg-panel-field-hover"
+        }`}
+      >
+        <span className="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-1">
+          <span className="text-[0.9375rem] font-extrabold uppercase tracking-[0.06em] text-ink">
+            {FACTS_COPY.redLineLabel}
+          </span>
+          <span className={narrowClass}>{FACTS_COPY.redLineNoTier}</span>
+        </span>
+
+        <span
+          className={`block whitespace-pre-line break-words pt-2.5 font-[family-name:var(--font-source)] ${TIER_QUOTE["worth-noting"]}`}
+        >
+          &ldquo;{match.citation.text}&rdquo;
+        </span>
+
+        <RedLineStamp match={match} />
+      </button>
+    </div>
+  );
+}
+
+/** The overprint: the reader's red line, stamped on after the panel was printed, and how the clause relates to it. */
+function RedLineStamp({ match }: { match: RedLineMatch }) {
+  return (
+    <span className="block pt-3">
+      <span className="overprint-stamp inline-block max-w-full break-words text-[0.6875rem] leading-tight">
+        {FACTS_COPY.redLineStamp}: {match.redLine.text}
+      </span>
+      <span className="block max-w-[68ch] pt-1 text-[0.9375rem] leading-[1.55] text-ink-soft">{match.explanation}</span>
+    </span>
   );
 }
 
 function FlagBlock({
   flag,
+  matches,
   active,
   onSelect,
   delay,
 }: {
   flag: FlagWithCounterOffer;
+  /** Red-line matches on this sentence. Stamped on; the tier above is untouched. */
+  matches: readonly RedLineMatch[];
   active: boolean;
   onSelect: () => void;
   delay: number;
@@ -224,6 +406,10 @@ function FlagBlock({
 
         <span className={`block pt-3 ${narrowClass}`}>{AXIS_LABEL[flag.axis]}</span>
         <span className="block max-w-[68ch] pt-1 text-[0.9375rem] leading-[1.55] text-ink-soft">{flag.rationale}</span>
+
+        {matches.map((match) => (
+          <RedLineStamp key={`${match.redLine.id}:${match.citation.start}`} match={match} />
+        ))}
       </button>
 
       {/* Only ever rendered inside a flag block, under the citation it answers. */}

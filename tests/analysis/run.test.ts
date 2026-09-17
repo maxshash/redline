@@ -128,7 +128,7 @@ describe("runAnalyzeDocument red lines", () => {
     if (state.status !== "analyzed") throw new Error(`expected an analysis, got ${state.status}`);
 
     expect(sentRedLines(model).map((r) => r.text)).toEqual(storeRows.map((r) => r.text));
-    expect(state.redLines).toEqual({ status: "loaded", count: 3 });
+    expect(state.redLines).toEqual({ status: "loaded", redLines: storeRows.map(({ id, text }) => ({ id, text })) });
     expect(state.analysis.redLineMatches.map((m) => m.redLine.id).sort()).toEqual(storeRows.map((r) => r.id).sort());
     expect(state.analysis.redLineMatches.some((m) => m.redLine.id === "evil")).toBe(false);
     expectCitationsVerbatim(adhesion.text, state.analysis);
@@ -139,7 +139,7 @@ describe("runAnalyzeDocument red lines", () => {
     const { model, deps: d } = withStore(fakeRedLineStore({ rows: [] }));
     const state = await runAnalyzeDocument({ text: adhesion.text, redLines: storeRows }, d);
     expect(sentRedLines(model)).toEqual([]);
-    expect(state).toMatchObject({ status: "analyzed", redLines: { status: "loaded", count: 0 } });
+    expect(state).toMatchObject({ status: "analyzed", redLines: { status: "loaded", redLines: [] } });
   });
 
   it.each<[string, RedLineStore | null, string]>([

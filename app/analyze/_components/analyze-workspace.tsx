@@ -2,14 +2,16 @@
 
 import { useRef, useState } from "react";
 import { analyzeDocumentText } from "@/app/_actions/analysis";
-import { askQuestion } from "@/app/_actions/answer";
+import { analyzeKeptDocument } from "@/app/_actions/library";
 import { ANALYSIS_COPY } from "@/lib/analysis/copy";
-import { ANSWER_COPY } from "@/lib/answer/copy";
+import { serializeAnalysis, serializeRedLinesUsed } from "@/lib/analysis/stored";
+import type { SavedDocument } from "@/lib/documents/documents";
 import { DocumentFacts, type AnalysisRun } from "./document-facts";
 import { DocumentIntake } from "./document-intake";
-import { KeepDocument } from "./keep-document";
-import { QuestionBox, entryCitations, type QuestionEntry } from "./question-box";
-import { SourceText, type FindingKey, type Selection } from "./source-text";
+import { KeepDocument, type LaterCheck } from "./keep-document";
+import { QuestionBox } from "./question-box";
+import { SourceText } from "./source-text";
+import { useReading } from "./use-reading";
 
 /** Whether this visitor can keep documents, decided on the server. */
 export type Keeping = "signed-in" | "signed-out" | "unavailable";
@@ -25,9 +27,6 @@ export interface DocumentInHand {
   source: { kind: "file"; name: string } | { kind: "paste" };
 }
 
-/** How many of this session's questions the page keeps on screen. */
-const QUESTIONS_KEPT = 10;
-
 function wordCount(text: string): number {
   return text.split(/\s+/).filter(Boolean).length;
 }
@@ -37,12 +36,11 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
   // Bumped for each new document so per-document state (like "saved") resets.
   const [documentNumber, setDocumentNumber] = useState(0);
   const [run, setRun] = useState<AnalysisRun>({ status: "idle" });
-  const [selection, setSelection] = useState<Selection | null>(null);
-  // This session's questions about the document in hand, newest first. Page state only; nothing is stored.
-  const [questions, setQuestions] = useState<QuestionEntry[]>([]);
-  // The question whose sentences are marked in the document.
-  const [activeQuestion, setActiveQuestion] = useState<number | null>(null);
-  const nextQuestionId = useRef(1);
+  // The library copy of the document in hand, once the reader has saved it.
+  // A check run after that is stored with it on the server.
+  const [kept, setKept] = useState<SavedDocument | null>(null);
+  const [laterCheck, setLaterCheck] = useState<LaterCheck>(null);
+  const reading = useReading(document?.text ?? "");
   // The document an in-flight analysis belongs to. A result for a document
   // that has since been replaced is dropped.
   const current = useRef(0);
@@ -52,56 +50,39 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
     setDocument(next);
     setDocumentNumber((n) => n + 1);
     setRun({ status: "idle" });
-    setSelection(null);
-    setQuestions([]);
-    setActiveQuestion(null);
-  }
-
-  async function ask(question: string, replacing?: number) {
-    const documentId = current.current;
-    const text = document?.text ?? "";
-    const id = nextQuestionId.current++;
-    setQuestions((previous) =>
-      [{ id, question, status: "pending" } as QuestionEntry, ...previous.filter((entry) => entry.id !== replacing)].slice(
-        0,
-        QUESTIONS_KEPT,
-      ),
-    );
-
-    let next: QuestionEntry;
-    try {
-      const state = await askQuestion({ text, question });
-      next =
-        state.status === "answered"
-          ? { id, question, status: "done", answer: state.answer }
-          : { id, question, status: "failed", message: state.message };
-    } catch {
-      next = { id, question, status: "failed", message: ANSWER_COPY.modelFailed };
-    }
-    if (documentId !== current.current) return;
-    setQuestions((previous) => previous.map((entry) => (entry.id === id ? next : entry)));
-    if (next.status === "done") {
-      // The newest answer's sentences are the ones marked, until the reader picks another.
-      setActiveQuestion(id);
-      setSelection((previous) => (previous?.key.startsWith("quote-") ? null : previous));
-    }
+    setKept(null);
+    setLaterCheck(null);
+    reading.reset();
   }
 
   async function startAnalysis(text: string) {
     const id = current.current;
     setRun({ status: "running" });
-    setSelection(null);
+    reading.clearSelection();
     let next: AnalysisRun;
+    let stored: LaterCheck = null;
     try {
-      const state = await analyzeDocumentText({ text });
-      next =
-        state.status === "analyzed"
-          ? { status: "done", analysis: state.analysis, redLines: state.redLines }
-          : { status: "failed", message: state.message };
+      if (kept) {
+        const state = await analyzeKeptDocument({ documentId: kept.id });
+        if (state.status === "analyzed") {
+          next = { status: "done", analysis: state.analysis, redLines: state.redLines };
+          stored = state.saved ? "saved" : "not-saved";
+        } else {
+          next = { status: "failed", message: state.message };
+        }
+      } else {
+        const state = await analyzeDocumentText({ text });
+        next =
+          state.status === "analyzed"
+            ? { status: "done", analysis: state.analysis, redLines: state.redLines }
+            : { status: "failed", message: state.message };
+      }
     } catch {
       next = { status: "failed", message: ANALYSIS_COPY.modelFailed };
     }
-    if (id === current.current) setRun(next);
+    if (id !== current.current) return;
+    setRun(next);
+    if (stored) setLaterCheck(stored);
   }
 
   if (!document) {
@@ -110,14 +91,15 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
 
   const flags = run.status === "done" ? run.analysis.flags : [];
   const matches = run.status === "done" ? run.analysis.redLineMatches : [];
-  const select = (key: FindingKey) => setSelection((previous) => ({ key, request: (previous?.request ?? 0) + 1 }));
-  const answerQuotes = entryCitations(questions.find((entry) => entry.id === activeQuestion));
-  const selectQuote = (entryId: number, index: number) => {
-    setActiveQuestion(entryId);
-    select(`quote-${index}`);
-  };
-  const activeQuote =
-    selection?.key.startsWith("quote-") && activeQuestion !== null ? Number(selection.key.slice("quote-".length)) : null;
+  // What saving sends when the document has already been checked: the check
+  // as it will be stored, re-verified against the text on the server.
+  const checkToKeep =
+    run.status === "done"
+      ? {
+          result: serializeAnalysis(run.analysis),
+          redLinesUsed: serializeRedLinesUsed(run.redLines.status === "loaded" ? run.redLines.redLines : []),
+        }
+      : null;
 
   const origin = document.source.kind === "file" ? `From ${document.source.name}` : "Pasted text";
 
@@ -147,22 +129,19 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
         <DocumentFacts
           run={run}
           onStart={() => void startAnalysis(document.text)}
-          activeKey={selection?.key ?? null}
-          onSelect={select}
+          activeKey={reading.selection?.key ?? null}
+          onSelect={reading.select}
         />
 
         <div className="barline-thin" />
 
         <QuestionBox
-          entries={questions}
-          onAsk={(question) => void ask(question)}
-          onRetry={(entryId) => {
-            const entry = questions.find((e) => e.id === entryId);
-            if (entry) void ask(entry.question, entryId);
-          }}
-          activeEntryId={activeQuestion}
-          activeQuote={activeQuote}
-          onSelectQuote={selectQuote}
+          entries={reading.questions}
+          onAsk={reading.ask}
+          onRetry={reading.retry}
+          activeEntryId={reading.activeQuestion}
+          activeQuote={reading.activeQuote}
+          onSelectQuote={reading.selectQuote}
         />
 
         <div className="barline-thin" />
@@ -172,6 +151,10 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
           keeping={keeping}
           document={document}
           onTitleChange={(title) => setDocument({ ...document, title })}
+          checkToKeep={checkToKeep}
+          checkRunning={run.status === "running"}
+          laterCheck={laterCheck}
+          onSaved={setKept}
         />
       </section>
 
@@ -179,9 +162,9 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
         text={document.text}
         flags={flags}
         matches={matches}
-        answerQuotes={answerQuotes}
-        selection={selection}
-        onSelect={select}
+        answerQuotes={reading.answerQuotes}
+        selection={reading.selection}
+        onSelect={reading.select}
         className="lg:sticky lg:top-5 lg:col-span-5"
       />
     </div>

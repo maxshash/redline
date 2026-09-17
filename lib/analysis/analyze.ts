@@ -82,12 +82,8 @@ export async function analyzeDocument(
 
   // The model gets short ids it can copy back reliably; they map to the real ones here.
   const sent = new Map<string, RedLineRef>();
-  const seenIds = new Set<string>();
-  for (const redLine of redLines) {
-    const redLineText = redLine.text.trim();
-    if (redLineText.length === 0 || seenIds.has(redLine.id)) continue;
-    seenIds.add(redLine.id);
-    sent.set(`red-line-${sent.size + 1}`, { id: redLine.id, text: redLineText });
+  for (const redLine of redLinesToSend(redLines)) {
+    sent.set(`red-line-${sent.size + 1}`, redLine);
   }
   const requestRedLines: RedLineRequestEntry[] = [...sent].map(([redLineId, redLine]) => ({
     redLineId,
@@ -194,6 +190,23 @@ export async function analyzeDocument(
   }
 
   return { summary, flags: withCounterOffers, redLineMatches, verification };
+}
+
+/**
+ * The red lines an analysis actually runs with: trimmed, blanks dropped, and
+ * the first of any repeated id kept. What a saved analysis records as
+ * "checked against" is this list, not the raw input.
+ */
+export function redLinesToSend(redLines: readonly RedLineRef[]): RedLineRef[] {
+  const seenIds = new Set<string>();
+  const kept: RedLineRef[] = [];
+  for (const redLine of redLines) {
+    const redLineText = redLine.text.trim();
+    if (redLineText.length === 0 || seenIds.has(redLine.id)) continue;
+    seenIds.add(redLine.id);
+    kept.push({ id: redLine.id, text: redLineText });
+  }
+  return kept;
 }
 
 /**

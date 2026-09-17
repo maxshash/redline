@@ -15,12 +15,26 @@ import type {
 } from "@/lib/analysis/types";
 import type { FindingKey } from "./source-text";
 
+/**
+ * Where a shown analysis lives. Set for a document in the library: "saved" is
+ * a check read from (or just written to) storage, "not-saved" one that ran but
+ * couldn't be stored. Left out on /analyze, where nothing is stored this way.
+ */
+export type AnalysisRecord = { kind: "saved"; checkedAt: string } | { kind: "not-saved" };
+
 /** What the page knows about the analysis of the document in hand. */
 export type AnalysisRun =
   | { status: "idle" }
   | { status: "running" }
-  | { status: "failed"; message: string }
-  | { status: "done"; analysis: Analysis; redLines: RedLinesUsed };
+  | { status: "failed"; message: string; retryLabel?: string }
+  | { status: "done"; analysis: Analysis; redLines: RedLinesUsed; record?: AnalysisRecord };
+
+const checkedDate = new Intl.DateTimeFormat("en-US", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
 
 /** Severity is rule weight; Critical is the only tier with colour (DESIGN.md). */
 const TIER_RULE: Record<SeverityTier, string> = {
@@ -84,6 +98,10 @@ export const FACTS_COPY = {
   redLinesSignIn: "Sign in",
   redLinesUnavailable: "Red lines need an account, and accounts aren't open yet.",
   redLinesFailed: "Couldn't load your red lines, so this check didn't look for them.",
+  redLinesCheckedAgainst: "Checked against these red lines",
+  redLinesNoneChecked: "This check didn't look for any red lines.",
+  checkedOn: "Checked on",
+  checkNotSaved: "Redline couldn't save this check. It will be gone when you leave this page.",
 } as const;
 
 function tierCounts(flags: readonly Flag[]): string {
@@ -141,13 +159,19 @@ export function DocumentFacts({
               {run.message}
             </p>
             <button type="button" onClick={onStart} className={`${buttonClass} mt-4`}>
-              {FACTS_COPY.retry}
+              {run.retryLabel ?? FACTS_COPY.retry}
             </button>
           </div>
         )}
 
         {run.status === "done" && (
-          <AnalysisResult analysis={run.analysis} redLines={run.redLines} activeKey={activeKey} onSelect={onSelect} />
+          <AnalysisResult
+            analysis={run.analysis}
+            redLines={run.redLines}
+            record={run.record}
+            activeKey={activeKey}
+            onSelect={onSelect}
+          />
         )}
       </div>
     </div>
@@ -157,11 +181,13 @@ export function DocumentFacts({
 function AnalysisResult({
   analysis,
   redLines,
+  record,
   activeKey,
   onSelect,
 }: {
   analysis: Analysis;
   redLines: RedLinesUsed;
+  record?: AnalysisRecord;
   activeKey: FindingKey | null;
   onSelect: (key: FindingKey) => void;
 }) {
@@ -171,6 +197,18 @@ function AnalysisResult({
 
   return (
     <>
+      {record?.kind === "saved" && (
+        <p className={`tabular ${narrowClass} pt-3`}>
+          {FACTS_COPY.checkedOn}{" "}
+          <time dateTime={record.checkedAt}>{checkedDate.format(new Date(record.checkedAt))}</time>
+        </p>
+      )}
+      {record?.kind === "not-saved" && (
+        <p role="alert" className="mt-4 max-w-[68ch] border-[3px] border-ink px-4 py-3 text-[1rem] font-bold leading-[1.45]">
+          {FACTS_COPY.checkNotSaved}
+        </p>
+      )}
+
       <section className="pt-4">
         <h3 className={labelClass}>{FACTS_COPY.summaryHeading}</h3>
         <p className={`${bodyClass} whitespace-pre-line`}>{analysis.summary}</p>
@@ -218,6 +256,7 @@ function AnalysisResult({
 
       <RedLinesSection
         redLines={redLines}
+        saved={record?.kind === "saved"}
         matches={redLineMatches}
         onTheirOwn={groups.onTheirOwn}
         activeKey={activeKey}
@@ -238,6 +277,7 @@ const quietLinkClass = "font-bold text-ink underline decoration-1 underline-offs
  */
 function RedLinesSection({
   redLines,
+  saved,
   matches,
   onTheirOwn,
   activeKey,
@@ -245,13 +285,19 @@ function RedLinesSection({
   firstDelay,
 }: {
   redLines: RedLinesUsed;
+  /** A saved check: say which red lines it ran with, since the list may have changed since. */
+  saved: boolean;
   matches: readonly RedLineMatch[];
   onTheirOwn: readonly number[];
   activeKey: FindingKey | null;
   onSelect: (key: FindingKey) => void;
   firstDelay: number;
 }) {
-  if (redLines.status !== "loaded" || redLines.count === 0) {
+  if (saved && redLines.status === "loaded" && redLines.redLines.length === 0) {
+    return <p className={`${quietClass} mt-6 border-t border-ink pt-3`}>{FACTS_COPY.redLinesNoneChecked}</p>;
+  }
+
+  if (redLines.status !== "loaded" || redLines.redLines.length === 0) {
     return (
       <p className={`${quietClass} mt-6 border-t border-ink pt-3`}>
         {redLines.status === "signed-out" && (
@@ -287,7 +333,20 @@ function RedLinesSection({
         <p className={`tabular ${narrowClass}`}>{FACTS_COPY.redLineCount(matches.length)}</p>
       </div>
 
-      {matches.length === 0 && <p className={bodyClass}>{FACTS_COPY.redLinesNoneMatched(redLines.count)}</p>}
+      {saved && (
+        <div className="pt-2">
+          <p className={narrowClass}>{FACTS_COPY.redLinesCheckedAgainst}</p>
+          <ul className="max-w-[68ch] pt-1">
+            {redLines.redLines.map((redLine) => (
+              <li key={redLine.id} className="break-words text-[0.9375rem] leading-[1.55] text-ink">
+                {redLine.text}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {matches.length === 0 && <p className={bodyClass}>{FACTS_COPY.redLinesNoneMatched(redLines.redLines.length)}</p>}
       {matches.length > 0 && onTheirOwn.length === 0 && <p className={bodyClass}>{FACTS_COPY.redLinesAllOnWarnings}</p>}
 
       {onTheirOwn.length > 0 && (

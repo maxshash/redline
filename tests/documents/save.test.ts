@@ -10,6 +10,8 @@ import {
   validateNewDocument,
 } from "@/lib/documents/documents";
 import { supabaseDocumentStore } from "@/lib/documents/supabase";
+import { prepareAnalysisRecord } from "@/lib/analysis/stored";
+import { analyzeFixture } from "../support/analyses";
 import { fakeDocumentStore } from "../support/fake-document-store";
 import { loadFixture } from "../support/fixtures";
 
@@ -144,6 +146,21 @@ describe("supabaseDocumentStore", () => {
     expect(calls.slice(0, 2)).toEqual([
       ["from", "documents"],
       ["insert", { title: "Lease", text: "Rent is due." }],
+    ]);
+  });
+
+  it("inserts an analysis with only its document id and JSON, never a user id", async () => {
+    const { calls, client } = recordingClient({ sub: "user-a" });
+    const { fixture, analysis, redLines } = await analyzeFixture("adhesion-contract");
+    const prepared = prepareAnalysisRecord(fixture.text, analysis, redLines);
+    if (!prepared.ok) throw new Error("fixture analysis should verify");
+    expect(await supabaseDocumentStore(client).insertAnalysis("doc-1", prepared.record)).toEqual({
+      id: "doc-1",
+      createdAt: "2026-09-16T12:00:00Z",
+    });
+    expect(calls.slice(0, 2)).toEqual([
+      ["from", "analyses"],
+      ["insert", { document_id: "doc-1", result: prepared.record.result, red_lines_used: prepared.record.redLinesUsed }],
     ]);
   });
 

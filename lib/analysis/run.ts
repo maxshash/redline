@@ -1,9 +1,9 @@
 import { TEXT_MAX_LENGTH } from "@/lib/documents/documents";
 import { loadRedLinesForAnalysis, type RedLineStore, type RedLinesForAnalysis } from "@/lib/red-lines/red-lines";
 import { ModelConfigError, type ModelClient } from "@/lib/model/client";
-import { AnalysisError, analyzeDocument } from "./analyze";
+import { AnalysisError, analyzeDocument, redLinesToSend } from "./analyze";
 import { ANALYSIS_COPY } from "./copy";
-import type { Analysis } from "./types";
+import type { Analysis, RedLineRef } from "./types";
 
 export { ANALYSIS_COPY } from "./copy";
 
@@ -17,10 +17,10 @@ export type AnalyzeFailure = "not-configured" | "model-failed" | "invalid-output
 
 /**
  * Which red lines the analysis ran with, as the result screen needs to know:
- * how many were checked, or why none were.
+ * the ones checked, or why none were. A saved analysis stores the list.
  */
 export type RedLinesUsed =
-  | { status: "loaded"; count: number }
+  | { status: "loaded"; redLines: RedLineRef[] }
   | { status: "signed-out" }
   | { status: "unavailable" }
   | { status: "failed" };
@@ -99,7 +99,7 @@ async function loadRedLinesSafely(store: RedLineStore | null, log: (message: str
 }
 
 function redLinesUsed(loaded: RedLinesForAnalysis): RedLinesUsed {
-  return loaded.status === "loaded" ? { status: "loaded", count: loaded.redLines.length } : { status: loaded.status };
+  return loaded.status === "loaded" ? { status: "loaded", redLines: redLinesToSend(loaded.redLines) } : { status: loaded.status };
 }
 
 function describe(error: unknown): string {

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { supabaseDocumentStore } from "@/lib/documents/supabase";
-import { createSupabaseServerClient, getSignedInUser } from "@/lib/supabase/server";
+import { LIBRARY_COPY, listLibrary, tallyLabel, type LibraryCheck } from "@/lib/library/library";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Redline: library",
@@ -17,10 +18,25 @@ const dateFormat = new Intl.DateTimeFormat("en-US", {
   timeZone: "UTC",
 });
 
+const narrowClass =
+  "tabular font-[family-name:var(--font-panel-narrow)] text-[0.8125rem] uppercase tracking-[0.08em] text-ink-soft";
+
+/** The latest saved check in one line: a tier tally, or why there isn't one. Counts only, never a score. */
+function CheckLine({ check }: { check: LibraryCheck }) {
+  if (check.status === "none") return <span className={narrowClass}>{LIBRARY_COPY.noCheck}</span>;
+  if (check.status === "needs-rerun") return <span className={`${narrowClass} text-ink`}>{LIBRARY_COPY.unverifiedCheck}</span>;
+  return (
+    <span className={`${narrowClass} ${check.tally.critical > 0 ? "text-critical" : "text-ink"}`}>
+      {tallyLabel(check.tally)}
+    </span>
+  );
+}
+
 export default async function Library() {
   // The signed-in layout has already sent anyone without a session to sign-in.
-  const [supabase, user] = await Promise.all([createSupabaseServerClient(), getSignedInUser()]);
-  const documents = supabase && user ? await supabaseDocumentStore(supabase).listForUser(user.id) : [];
+  const supabase = await createSupabaseServerClient();
+  const state = await listLibrary({ store: supabase ? supabaseDocumentStore(supabase) : null });
+  const documents = state.status === "listed" ? state.documents : null;
 
   return (
     <section className="border-[3px] border-ink bg-panel-field px-5 py-6 text-ink sm:px-8 sm:py-8">
@@ -41,7 +57,7 @@ export default async function Library() {
             role="alert"
             className="max-w-[60ch] border-[3px] border-ink px-4 py-3 text-[1rem] font-bold leading-[1.45] text-ink"
           >
-            Couldn&apos;t load your documents. Refresh the page to try again.
+            {state.status === "listed" ? null : state.message}
           </p>
         </div>
       )}
@@ -66,19 +82,23 @@ export default async function Library() {
         <>
           <ul className="pt-5">
             {documents.map((document) => (
-              <li
-                key={document.id}
-                className="hairline flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-3.5 first:border-t first:border-ink"
-              >
-                <p className="min-w-0 max-w-[60ch] break-words text-[1rem] font-bold leading-[1.35]">
-                  {document.title}
-                </p>
-                <time
-                  dateTime={document.createdAt}
-                  className="tabular shrink-0 font-[family-name:var(--font-panel-narrow)] text-[0.8125rem] uppercase tracking-[0.08em] text-ink-soft"
+              <li key={document.id} className="hairline first:border-t first:border-ink">
+                <Link
+                  href={`/library/${document.id}`}
+                  className="-mx-2 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 px-2 py-3.5 transition-colors hover:bg-panel-field-hover"
                 >
-                  {dateFormat.format(new Date(document.createdAt))}
-                </time>
+                  <span className="min-w-0 max-w-[60ch]">
+                    <span className="block break-words text-[1rem] font-bold leading-[1.35] underline decoration-1 underline-offset-[3px]">
+                      {document.title}
+                    </span>
+                    <span className="block pt-0.5">
+                      <CheckLine check={document.check} />
+                    </span>
+                  </span>
+                  <time dateTime={document.createdAt} className={`${narrowClass} shrink-0`}>
+                    {dateFormat.format(new Date(document.createdAt))}
+                  </time>
+                </Link>
               </li>
             ))}
           </ul>

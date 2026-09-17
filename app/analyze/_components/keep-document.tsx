@@ -8,8 +8,24 @@ import {
   TITLE_MAX_LENGTH,
   validateNewDocument,
   type SaveDocumentState,
+  type SavedDocument,
 } from "@/lib/documents/documents";
+import type { StoredAnalysis, StoredRedLinesUsed } from "@/lib/analysis/stored";
 import type { DocumentInHand, Keeping } from "./analyze-workspace";
+
+/** A check run after the document was saved: stored with it, or not. Null if there was none. */
+export type LaterCheck = "saved" | "not-saved" | null;
+
+export const KEEP_COPY = {
+  intro: "Saves the title and the text shown here. The file isn't saved.",
+  introWithCheck: "Saves the title, the text shown here and this check. The file isn't saved.",
+  savedHeading: "Saved to your library",
+  textOnly: "Only the text was saved. Check it now and the check is saved with it.",
+  withCheck: "The text and this check were saved. The file wasn't.",
+  checkNotSaved: "The text was saved, but this check wasn't. You can check it again from your library.",
+  openIt: "Open it in your library",
+  waitForCheck: "You can save once the check finishes.",
+} as const;
 
 const bodyClass = "max-w-[60ch] pt-1.5 text-[0.9375rem] leading-[1.55] text-ink-soft";
 const linkClass = "font-bold text-ink underline decoration-1 underline-offset-[3px] hover:decoration-[3px]";
@@ -37,16 +53,29 @@ function AccountOnlyLine({ keeping }: { keeping: Exclude<Keeping, "signed-in"> }
 
 /**
  * Offer to keep the document in the library. Saving is a choice the reader
- * makes, never automatic. Only the title and the extracted text are sent.
+ * makes, never automatic. Only the title and the extracted text are sent,
+ * plus the check if the document was already checked; the server re-verifies
+ * that check against the text before storing either.
  */
 export function KeepDocument({
   keeping,
   document,
   onTitleChange,
+  checkToKeep = null,
+  checkRunning = false,
+  laterCheck = null,
+  onSaved,
 }: {
   keeping: Keeping;
   document: DocumentInHand;
   onTitleChange: (title: string) => void;
+  /** The finished check of this text, as it would be stored. */
+  checkToKeep?: { result: StoredAnalysis; redLinesUsed: StoredRedLinesUsed } | null;
+  /** A check is in flight; saving waits so the check isn't left behind. */
+  checkRunning?: boolean;
+  /** What happened to a check run after saving. */
+  laterCheck?: LaterCheck;
+  onSaved?: (document: SavedDocument) => void;
 }) {
   const [state, setState] = useState<SaveDocumentState>({ status: "idle" });
   const [pending, startTransition] = useTransition();
@@ -63,13 +92,16 @@ export function KeepDocument({
   }
 
   if (state.status === "saved") {
+    const checkState = laterCheck ?? (state.analysis === "failed" ? "not-saved" : state.analysis ?? null);
+    const line =
+      checkState === "saved" ? KEEP_COPY.withCheck : checkState === "not-saved" ? KEEP_COPY.checkNotSaved : KEEP_COPY.textOnly;
     return (
       <div className="px-5 pb-6 pt-4 sm:px-7" role="status">
-        <h2 className="text-[0.9375rem] font-bold uppercase tracking-[0.06em]">Saved to your library</h2>
+        <h2 className="text-[0.9375rem] font-bold uppercase tracking-[0.06em]">{KEEP_COPY.savedHeading}</h2>
         <p className={bodyClass}>
-          Only the text was saved.{" "}
-          <Link href="/library" className={linkClass}>
-            Open your library
+          {line}{" "}
+          <Link href={`/library/${state.document.id}`} className={linkClass}>
+            {KEEP_COPY.openIt}
           </Link>
         </p>
       </div>
@@ -79,14 +111,18 @@ export function KeepDocument({
   function save(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const payload = { title: document.title, text: document.text };
+    const checkToSend = checkToKeep;
     const check = validateNewDocument(payload);
     if (!check.ok) {
       setState({ status: "invalid", message: check.message });
       return;
     }
+    const sent = check.document;
     startTransition(async () => {
       try {
-        setState(await saveDocument(check.document));
+        const next = await saveDocument(checkToSend ? { ...sent, analysis: checkToSend } : sent);
+        setState(next);
+        if (next.status === "saved") onSaved?.(next.document);
       } catch {
         setState({ status: "error", message: DOCUMENT_COPY.saveFailed });
       }
@@ -98,7 +134,7 @@ export function KeepDocument({
   return (
     <form onSubmit={save} className="px-5 pb-6 pt-4 sm:px-7">
       <h2 className="text-[0.9375rem] font-bold uppercase tracking-[0.06em]">Keep it in your library</h2>
-      <p className={bodyClass}>Saves the title and the text shown here. The file isn&apos;t saved.</p>
+      <p className={bodyClass}>{checkToKeep ? KEEP_COPY.introWithCheck : KEEP_COPY.intro}</p>
 
       {message && (
         <p
@@ -128,12 +164,13 @@ export function KeepDocument({
         </div>
         <button
           type="submit"
-          disabled={pending}
+          disabled={pending || checkRunning}
           className="border-[3px] border-ink bg-carton px-6 py-3 text-[0.9375rem] font-extrabold uppercase tracking-[0.08em] text-carton-ink transition-colors hover:bg-ink hover:text-panel-field disabled:cursor-wait disabled:bg-ink disabled:text-panel-field"
         >
           {pending ? "Saving…" : "Save"}
         </button>
       </div>
+      {checkRunning && !pending && <p className={bodyClass}>{KEEP_COPY.waitForCheck}</p>}
     </form>
   );
 }

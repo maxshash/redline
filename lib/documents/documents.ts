@@ -1,10 +1,13 @@
 /**
  * Keeping a document: validation and the save flow, independent of Supabase.
  *
- * Only a title and the extracted text are ever stored. The owner is not part
- * of the payload: the database fills `user_id` from the signed-in session and
- * row-level security refuses any other value.
+ * Only a title and the extracted text are ever stored, plus, when the document
+ * was already checked, that analysis. The owner is not part of the payload:
+ * the database fills `user_id` from the signed-in session and row-level
+ * security refuses any other value.
  */
+
+import { hydrateStoredAnalysis, prepareAnalysisRecord, type AnalysisRecord } from "@/lib/analysis/stored";
 
 export const TITLE_MAX_LENGTH = 200;
 /**
@@ -25,9 +28,45 @@ export interface SavedDocument {
   createdAt: string;
 }
 
+/** A kept document with its text, as read back from storage. */
+export interface StoredDocument {
+  id: string;
+  title: string;
+  text: string;
+  createdAt: string;
+}
+
+/**
+ * An analyses row as read from storage. Its JSON is untrusted until
+ * `hydrateStoredAnalysis` has checked it against the document's text.
+ */
+export interface StoredAnalysisRow {
+  id: string;
+  result: unknown;
+  redLinesUsed: unknown;
+  createdAt: string;
+}
+
+export interface SavedAnalysisMeta {
+  id: string;
+  createdAt: string;
+}
+
+/** A document and the latest of its analyses, if it has any. */
+export interface DocumentWithLatestAnalysis {
+  document: StoredDocument;
+  latestAnalysis: StoredAnalysisRow | null;
+}
+
+export type DocumentLookup =
+  | ({ status: "found" } & DocumentWithLatestAnalysis)
+  /** No such row, or not the caller's: row-level security makes the two look the same. */
+  | { status: "missing" }
+  | { status: "failed" };
+
 /**
  * The storage boundary. The Supabase implementation lives in ./supabase;
- * tests pass a fake so the save flow's own rules are what gets exercised.
+ * tests pass a fake so the flows' own rules are what gets exercised.
  */
 export interface DocumentStore {
   /** The signed-in user's id from verified session claims, or null. */
@@ -36,6 +75,16 @@ export interface DocumentStore {
   insert(document: NewDocument): Promise<SavedDocument | null>;
   /** The user's documents, newest first; null if the read failed. */
   listForUser(userId: string): Promise<SavedDocument[] | null>;
+  /** The user's documents with text and latest analysis, newest first; null if the read failed. */
+  listWithLatestAnalysis(userId: string): Promise<DocumentWithLatestAnalysis[] | null>;
+  /** One document by id, with its latest analysis. */
+  findWithLatestAnalysis(documentId: string): Promise<DocumentLookup>;
+  /**
+   * Store an analysis of a document. Takes only an `AnalysisRecord`, which
+   * exists only once the analysis has been checked against the text it is
+   * stored with. Null if the insert failed.
+   */
+  insertAnalysis(documentId: string, record: AnalysisRecord): Promise<SavedAnalysisMeta | null>;
 }
 
 export const DOCUMENT_COPY = {
@@ -44,11 +93,17 @@ export const DOCUMENT_COPY = {
   missingText: "There's no text to save.",
   longText: `This document is too long to keep. The limit is ${TEXT_MAX_LENGTH.toLocaleString("en-US")} characters.`,
   saveFailed: "Couldn't save the document. Try again.",
+  analysisMismatch:
+    "The check on screen doesn't match this text, so nothing was saved. Check the document again, then save it.",
 } as const;
 
 export type SaveDocumentState =
   | { status: "idle" }
-  | { status: "saved"; document: SavedDocument }
+  /**
+   * `analysis` is there only when one was sent: "saved" when it was stored
+   * alongside the document, "failed" when the document was kept without it.
+   */
+  | { status: "saved"; document: SavedDocument; analysis?: "saved" | "failed" }
   | { status: "invalid"; message: string }
   | { status: "signed-out" }
   | { status: "unavailable" }
@@ -78,6 +133,13 @@ export function validateNewDocument(input: unknown): Validation {
 /**
  * Save a document for the signed-in user. `store` is null when Supabase isn't
  * configured, which is reported as unavailable rather than faked.
+ *
+ * If the payload carries `analysis` (`{ result, redLinesUsed }`, the check the
+ * reader already ran on this text), it comes from the browser and is treated
+ * as untrusted: it has to hydrate against the text being saved, citation by
+ * citation, before anything is written. If it doesn't, nothing is stored, not
+ * even the document, so the reader isn't left with a document whose check
+ * silently went missing.
  */
 export async function runSaveDocument(input: unknown, store: DocumentStore | null): Promise<SaveDocumentState> {
   if (!store) return { status: "unavailable" };
@@ -87,9 +149,26 @@ export async function runSaveDocument(input: unknown, store: DocumentStore | nul
   const validation = validateNewDocument(input);
   if (!validation.ok) return { status: "invalid", message: validation.message };
 
+  const sent = typeof input === "object" && input !== null ? (input as Record<string, unknown>).analysis : undefined;
+  let record: AnalysisRecord | null = null;
+  if (sent !== undefined && sent !== null) {
+    const payload = typeof sent === "object" ? (sent as Record<string, unknown>) : {};
+    const checked = hydrateStoredAnalysis(validation.document.text, {
+      result: payload.result,
+      redLinesUsed: payload.redLinesUsed,
+    });
+    if (!checked.ok) return { status: "invalid", message: DOCUMENT_COPY.analysisMismatch };
+    const prepared = prepareAnalysisRecord(validation.document.text, checked.analysis, checked.redLinesUsed);
+    if (!prepared.ok) return { status: "invalid", message: DOCUMENT_COPY.analysisMismatch };
+    record = prepared.record;
+  }
+
   const saved = await store.insert(validation.document);
   if (!saved) return { status: "error", message: DOCUMENT_COPY.saveFailed };
-  return { status: "saved", document: saved };
+  if (!record) return { status: "saved", document: saved };
+
+  const analysis = await store.insertAnalysis(saved.id, record);
+  return { status: "saved", document: saved, analysis: analysis ? "saved" : "failed" };
 }
 
 /** A document title from a file name: the name without its extension. */

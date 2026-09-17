@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { groupRedLineMatches } from "@/lib/analysis/red-line-groups";
 import type { Flag, RedLineMatch, SeverityTier } from "@/lib/analysis/types";
+import type { Citation } from "@/lib/citations/citation";
 
 /** In the document, a cited span carries its own tier's device (DESIGN.md). */
 const MARK_TIER: Record<SeverityTier, string> = {
@@ -18,10 +19,11 @@ const OUTLINE_TIER: Record<SeverityTier, string> = {
 };
 
 /**
- * What can be selected: a flag, or a red-line match shown on its own. A match
- * that overlaps a flag is shown on that flag, so selecting it selects the flag.
+ * What can be selected: a flag, a red-line match shown on its own, or a
+ * sentence the active question-box answer quotes. A match that overlaps a
+ * flag is shown on that flag, so selecting it selects the flag.
  */
-export type FindingKey = `flag-${number}` | `match-${number}`;
+export type FindingKey = `flag-${number}` | `match-${number}` | `quote-${number}`;
 
 export interface Selection {
   key: FindingKey;
@@ -36,6 +38,8 @@ interface Segment {
   flags: number[];
   /** Indexes into `matches` of every red-line match whose citation covers this segment. */
   matches: number[];
+  /** Indexes into `quotes` of every answer citation that covers this segment. */
+  quotes: number[];
 }
 
 type Span = { start: number; end: number };
@@ -45,7 +49,12 @@ type Span = { start: number; end: number };
  * same flags and red-line matches. Offsets are the citations' own
  * `start`/`end`, so a mark covers exactly the cited span.
  */
-function paragraphSegments(text: string, flags: readonly Span[], matches: readonly Span[]): Segment[][] {
+function paragraphSegments(
+  text: string,
+  flags: readonly Span[],
+  matches: readonly Span[],
+  quotes: readonly Span[],
+): Segment[][] {
   const paragraphs: Span[] = [];
   let cursor = 0;
   for (const gap of text.matchAll(/\n{2,}/g)) {
@@ -59,7 +68,7 @@ function paragraphSegments(text: string, flags: readonly Span[], matches: readon
 
   return paragraphs.map(({ start, end }) => {
     const cuts = new Set([start, end]);
-    for (const span of [...flags, ...matches]) {
+    for (const span of [...flags, ...matches, ...quotes]) {
       if (span.start > start && span.start < end) cuts.add(span.start);
       if (span.end > start && span.end < end) cuts.add(span.end);
     }
@@ -67,7 +76,13 @@ function paragraphSegments(text: string, flags: readonly Span[], matches: readon
     const segments: Segment[] = [];
     for (let i = 0; i < points.length - 1; i++) {
       const [a, b] = [points[i], points[i + 1]];
-      segments.push({ start: a, end: b, flags: covering(flags, a, b), matches: covering(matches, a, b) });
+      segments.push({
+        start: a,
+        end: b,
+        flags: covering(flags, a, b),
+        matches: covering(matches, a, b),
+        quotes: covering(quotes, a, b),
+      });
     }
     return segments;
   });
@@ -78,12 +93,15 @@ function paragraphSegments(text: string, flags: readonly Span[], matches: readon
  * document's own voice, so it is set in Tinos (DESIGN.md, the Three-Voice
  * Rule). Each flag's span carries its tier's underline; each red-line match's
  * span carries the dashed overprint underline on an inner span, so a sentence
- * that is both shows both. Selecting a mark selects its finding.
+ * that is both shows both. A sentence the active answer quotes carries the
+ * answer's double overline on its own innermost span, so it can sit on top of
+ * either without changing them. Selecting a mark selects its finding.
  */
 export function SourceText({
   text,
   flags = [],
   matches = [],
+  answerQuotes = [],
   selection = null,
   onSelect,
   className = "",
@@ -91,6 +109,8 @@ export function SourceText({
   text: string;
   flags?: readonly Flag[];
   matches?: readonly RedLineMatch[];
+  /** The citations of the answer the reader is looking at. */
+  answerQuotes?: readonly Citation[];
   selection?: Selection | null;
   onSelect?: (key: FindingKey) => void;
   className?: string;
@@ -102,6 +122,7 @@ export function SourceText({
     text,
     flags.map((flag) => flag.citation),
     matches.map((match) => match.citation),
+    answerQuotes,
   );
   const groups = groupRedLineMatches(flags, matches);
   const activeKey = selection?.key ?? null;
@@ -134,6 +155,7 @@ export function SourceText({
   const keysOf = (segment: Segment): FindingKey[] => [
     ...segment.flags.map((f): FindingKey => `flag-${f}`),
     ...segment.matches.filter((m) => groups.onTheirOwn.includes(m)).map((m): FindingKey => `match-${m}`),
+    ...segment.quotes.map((q): FindingKey => `quote-${q}`),
   ];
   const firstSegment = new Map<FindingKey, string>();
   paragraphs.forEach((segments, p) =>
@@ -143,6 +165,7 @@ export function SourceText({
   );
 
   const hasFindings = flags.length > 0 || matches.length > 0;
+  const hasQuotes = answerQuotes.length > 0;
 
   return (
     <article
@@ -152,10 +175,14 @@ export function SourceText({
     >
       <header className="hairline px-5 py-3.5">
         <h2 id="source-text-heading" className="text-[0.9375rem] font-bold uppercase tracking-[0.06em]">
-          {hasFindings ? "The document itself" : "Extracted text"}
+          {hasFindings || hasQuotes ? "The document itself" : "Extracted text"}
         </h2>
         <p className="pt-0.5 font-[family-name:var(--font-panel-narrow)] text-[0.8125rem] uppercase tracking-[0.08em] text-ink-soft">
-          {hasFindings ? "Every warning and red-line match quotes a passage in here" : "What Redline read, word for word"}
+          {hasFindings
+            ? "Every warning and red-line match quotes a passage in here"
+            : hasQuotes
+              ? "Sentences the answer quotes are marked"
+              : "What Redline read, word for word"}
         </p>
       </header>
       <div
@@ -171,7 +198,9 @@ export function SourceText({
           >
             {segments.map((segment, s) => {
               const content = text.slice(segment.start, segment.end);
-              if (segment.flags.length === 0 && segment.matches.length === 0) return <span key={s}>{content}</span>;
+              if (segment.flags.length === 0 && segment.matches.length === 0 && segment.quotes.length === 0) {
+                return <span key={s}>{content}</span>;
+              }
 
               const keys = keysOf(segment);
               const targets = [...keys, ...segment.matches.map(matchTarget)];
@@ -187,7 +216,13 @@ export function SourceText({
                     ? Math.min(...segment.flags)
                     : null;
               const tier = shownFlag === null ? null : flags[shownFlag].severity;
-              const outline = activeKey?.startsWith("flag-") && tier ? OUTLINE_TIER[tier] : "outline-overprint";
+              const outline =
+                activeKey?.startsWith("flag-") && tier
+                  ? OUTLINE_TIER[tier]
+                  : activeKey?.startsWith("quote-")
+                    ? "outline-ink"
+                    : "outline-overprint";
+              const answered = segment.quotes.length > 0 ? <span className="mark-answer">{content}</span> : content;
               const refKey = `${p}:${s}`;
 
               return (
@@ -216,7 +251,7 @@ export function SourceText({
                     isActive ? `outline-2 outline-offset-2 ${outline}` : "hover:bg-panel-field-active",
                   ].join(" ")}
                 >
-                  {segment.matches.length > 0 ? <span className="mark-redline">{content}</span> : content}
+                  {segment.matches.length > 0 ? <span className="mark-redline">{answered}</span> : answered}
                 </span>
               );
             })}

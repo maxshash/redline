@@ -1,5 +1,5 @@
 import { expect } from "vitest";
-import type { Citation } from "@/lib/analysis/citation";
+import type { Citation } from "@/lib/citations/citation";
 import type { Flag, RedLineMatch } from "@/lib/analysis/types";
 
 /**

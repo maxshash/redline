@@ -4,9 +4,13 @@
  * lines. `npm run smoke`. Prints the result, each flag's counter-offer under
  * its source sentence, each red-line match with its red line and source
  * sentence, which planted clauses were found and which red-line cases were
- * matched. Never prints the API key.
+ * matched. Then it asks the sidecar's supported and unsupported questions
+ * through the real answerQuestion and prints each answer, its cited sentences
+ * and whether it came back as expected. Never prints the API key.
  */
 import { analyzeDocument } from "../lib/analysis/analyze";
+import { answerQuestion } from "../lib/answer/answer";
+import type { Answer } from "../lib/answer/types";
 import { ModelConfigError, modelClientFromEnv, type ModelClient } from "../lib/model/client";
 import { loadFixture } from "../tests/support/fixtures";
 import { plantedClausesFound } from "../tests/support/planted";
@@ -97,8 +101,55 @@ async function main(): Promise<number> {
     const bar = redLineCase.clearsDangerousBar ? "clears the dangerous bar" : "below the dangerous bar";
     console.log(`  ${mark} ${redLine.id} "${redLine.text}" (${bar})`);
   }
-  console.log(`\nDone in ${seconds}s.`);
+  console.log(`\nAnalysis done in ${seconds}s.`);
+
+  await askSidecarQuestions(fixture, model);
+  console.log(`\nDone in ${((Date.now() - startedAt) / 1000).toFixed(1)}s.`);
   return 0;
+}
+
+/** The question box: the sidecar's questions through the real answerQuestion, one at a time. */
+async function askSidecarQuestions(fixture: ReturnType<typeof loadFixture>, model: ModelClient) {
+  const { supported, unsupported } = fixture.sidecar.questions;
+  const cases = [
+    ...supported.map((q) => ({ question: q.question, expected: "answered" as const, supportingSentence: q.supportingSentence })),
+    ...unsupported.map((q) => ({ question: q.question, expected: "not-in-document" as const, supportingSentence: null })),
+  ];
+
+  console.log(`\nQUESTIONS (${cases.length})`);
+  let asExpected = 0;
+  for (const [i, c] of cases.entries()) {
+    console.log(`\n${i + 1}. ${c.question}`);
+    let answer: Answer;
+    try {
+      answer = await answerQuestion(fixture.text, c.question, { model });
+    } catch (error) {
+      const kind = error && typeof error === "object" && "kind" in error ? ` (${String(error.kind)})` : "";
+      console.log(`   FAILED${kind}: ${error instanceof Error ? error.message : String(error)}`);
+      continue;
+    }
+
+    const cited = answer.kind === "answered" ? answer.citations : answer.related;
+    let ok = answer.kind === c.expected;
+    if (ok && c.supportingSentence !== null) {
+      const start = fixture.text.indexOf(c.supportingSentence);
+      const end = start + c.supportingSentence.length;
+      ok = cited.some((citation) => citation.start < end && citation.end > start);
+    }
+    if (ok) asExpected++;
+
+    console.log(`   Status: ${answer.kind} (expected ${c.expected}) ${ok ? "as expected" : "NOT AS EXPECTED"}`);
+    console.log(`   ${answer.kind === "answered" ? `Answer: ${answer.answer}` : `Message: ${answer.message}`}`);
+    const label = answer.kind === "answered" ? "Cited" : "Closest";
+    if (cited.length === 0) console.log(`   ${label}: none`);
+    for (const citation of cited) console.log(`   ${label} [${citation.start}-${citation.end}]: ${citation.text}`);
+    const v = answer.verification;
+    console.log(
+      `   Quotes: ${v.quotesProposed} proposed, ${v.quotesKept} kept, ${v.quotesDropped} dropped, ${v.quotesDuplicate} duplicate` +
+        `; ${v.downgraded ? `downgraded by Redline (${v.downgradeReason})` : answer.kind === "answered" ? "not downgraded" : "the model itself said not-in-document"}`,
+    );
+  }
+  console.log(`\nQUESTIONS AS EXPECTED (${asExpected}/${cases.length})`);
 }
 
 main().then(

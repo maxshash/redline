@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { analyzeDocument, type AnalyzeDeps } from "@/lib/analysis/analyze";
-import type { Citation } from "@/lib/analysis/citation";
+import type { Citation } from "@/lib/citations/citation";
 import { draftCounterOffers } from "@/lib/analysis/counter-offer";
 import type { Analysis, CounterOffer, Flag, FlagWithCounterOffer } from "@/lib/analysis/types";
 import { expectCitationsVerbatim } from "../support/citations";

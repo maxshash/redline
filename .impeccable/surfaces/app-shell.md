@@ -41,4 +41,7 @@ One thing the landing page does not answer and this surface must: the Drug Facts
 - Navigation model between upload, result, question box, red lines, and library. The world suggests a carton/panel logic rather than a conventional left rail, but nothing is chosen.
 - How the clean result is rendered so it reads as a trustworthy finding rather than "nothing happened." The landing page's answer — state it plainly in the panel's own voice, with no color and no badge — is a starting point, not a decision for this surface.
 - How the panel system scales to long documents and to the library's many-documents view (see above).
-- Whether the question box, which must answer only from the document, gets a visual device that distinguishes its answers from analysis output. The two have different guarantees and should probably not look identical.
+
+## Resolved decisions
+
+- **Question box answers get their own device (ticket 06).** An answer restates what its quoted sentences say and judges nothing, so it must not borrow the severity system or the overprint. Each answer block sits under a 4px double ink rule (`.rule-answer`), with no tier label, no colour and no stamp. An answer is tagged "Answered from your document" and lists every cited sentence in full in Tinos; a not-in-document result uses the same rule and states "Not in your document" plainly in ink, as a finding rather than an error, with any closest sentences below. In the source document, a cited sentence of the answer the reader is looking at carries a double ink overline (`.mark-answer`) on its own innermost span, so it never collides with a tier underline or the dashed red-line underline. Only the active answer's sentences are marked.

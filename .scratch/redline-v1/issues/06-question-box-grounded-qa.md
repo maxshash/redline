@@ -4,9 +4,9 @@
 
 **Blocked by:** 02 (Upload, client-side extraction, and private document storage)
 
-**Status:** ready-for-agent
+**Status:** done (stub suite + live smoke 7/7 after one send-back; see BUILD-REPORT.md)
 
-- [ ] `answerQuestion(text, question) → Answer` seam implemented, routed through OpenRouter, with no access to the red-line list or the analysis output.
-- [ ] A user can type a question about their document in a question box and receive an answer.
-- [ ] Test: for questions whose answers are supported by the document text, the answer draws only on that text.
-- [ ] Test: for questions whose answers are not supported by the document text, the response is an honest non-answer — never a fabricated claim standing in for "I don't know."
+- [x] `answerQuestion(text, question) → Answer` seam implemented, routed through OpenRouter, with no access to the red-line list or the analysis output.
+- [x] A user can type a question about their document in a question box and receive an answer.
+- [x] Test: for questions whose answers are supported by the document text, the answer draws only on that text.
+- [x] Test: for questions whose answers are not supported by the document text, the response is an honest non-answer — never a fabricated claim standing in for "I don't know."

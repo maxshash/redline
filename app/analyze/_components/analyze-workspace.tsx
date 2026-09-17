@@ -2,10 +2,13 @@
 
 import { useRef, useState } from "react";
 import { analyzeDocumentText } from "@/app/_actions/analysis";
+import { askQuestion } from "@/app/_actions/answer";
 import { ANALYSIS_COPY } from "@/lib/analysis/copy";
+import { ANSWER_COPY } from "@/lib/answer/copy";
 import { DocumentFacts, type AnalysisRun } from "./document-facts";
 import { DocumentIntake } from "./document-intake";
 import { KeepDocument } from "./keep-document";
+import { QuestionBox, entryCitations, type QuestionEntry } from "./question-box";
 import { SourceText, type FindingKey, type Selection } from "./source-text";
 
 /** Whether this visitor can keep documents, decided on the server. */
@@ -22,6 +25,9 @@ export interface DocumentInHand {
   source: { kind: "file"; name: string } | { kind: "paste" };
 }
 
+/** How many of this session's questions the page keeps on screen. */
+const QUESTIONS_KEPT = 10;
+
 function wordCount(text: string): number {
   return text.split(/\s+/).filter(Boolean).length;
 }
@@ -32,6 +38,11 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
   const [documentNumber, setDocumentNumber] = useState(0);
   const [run, setRun] = useState<AnalysisRun>({ status: "idle" });
   const [selection, setSelection] = useState<Selection | null>(null);
+  // This session's questions about the document in hand, newest first. Page state only; nothing is stored.
+  const [questions, setQuestions] = useState<QuestionEntry[]>([]);
+  // The question whose sentences are marked in the document.
+  const [activeQuestion, setActiveQuestion] = useState<number | null>(null);
+  const nextQuestionId = useRef(1);
   // The document an in-flight analysis belongs to. A result for a document
   // that has since been replaced is dropped.
   const current = useRef(0);
@@ -42,6 +53,38 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
     setDocumentNumber((n) => n + 1);
     setRun({ status: "idle" });
     setSelection(null);
+    setQuestions([]);
+    setActiveQuestion(null);
+  }
+
+  async function ask(question: string, replacing?: number) {
+    const documentId = current.current;
+    const text = document?.text ?? "";
+    const id = nextQuestionId.current++;
+    setQuestions((previous) =>
+      [{ id, question, status: "pending" } as QuestionEntry, ...previous.filter((entry) => entry.id !== replacing)].slice(
+        0,
+        QUESTIONS_KEPT,
+      ),
+    );
+
+    let next: QuestionEntry;
+    try {
+      const state = await askQuestion({ text, question });
+      next =
+        state.status === "answered"
+          ? { id, question, status: "done", answer: state.answer }
+          : { id, question, status: "failed", message: state.message };
+    } catch {
+      next = { id, question, status: "failed", message: ANSWER_COPY.modelFailed };
+    }
+    if (documentId !== current.current) return;
+    setQuestions((previous) => previous.map((entry) => (entry.id === id ? next : entry)));
+    if (next.status === "done") {
+      // The newest answer's sentences are the ones marked, until the reader picks another.
+      setActiveQuestion(id);
+      setSelection((previous) => (previous?.key.startsWith("quote-") ? null : previous));
+    }
   }
 
   async function startAnalysis(text: string) {
@@ -68,6 +111,13 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
   const flags = run.status === "done" ? run.analysis.flags : [];
   const matches = run.status === "done" ? run.analysis.redLineMatches : [];
   const select = (key: FindingKey) => setSelection((previous) => ({ key, request: (previous?.request ?? 0) + 1 }));
+  const answerQuotes = entryCitations(questions.find((entry) => entry.id === activeQuestion));
+  const selectQuote = (entryId: number, index: number) => {
+    setActiveQuestion(entryId);
+    select(`quote-${index}`);
+  };
+  const activeQuote =
+    selection?.key.startsWith("quote-") && activeQuestion !== null ? Number(selection.key.slice("quote-".length)) : null;
 
   const origin = document.source.kind === "file" ? `From ${document.source.name}` : "Pasted text";
 
@@ -103,6 +153,20 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
 
         <div className="barline-thin" />
 
+        <QuestionBox
+          entries={questions}
+          onAsk={(question) => void ask(question)}
+          onRetry={(entryId) => {
+            const entry = questions.find((e) => e.id === entryId);
+            if (entry) void ask(entry.question, entryId);
+          }}
+          activeEntryId={activeQuestion}
+          activeQuote={activeQuote}
+          onSelectQuote={selectQuote}
+        />
+
+        <div className="barline-thin" />
+
         <KeepDocument
           key={documentNumber}
           keeping={keeping}
@@ -115,6 +179,7 @@ export function AnalyzeWorkspace({ keeping }: { keeping: Keeping }) {
         text={document.text}
         flags={flags}
         matches={matches}
+        answerQuotes={answerQuotes}
         selection={selection}
         onSelect={select}
         className="lg:sticky lg:top-5 lg:col-span-5"

@@ -1,6 +1,6 @@
-import type { Citation } from "./citation";
+import type { Citation } from "@/lib/citations/citation";
 
-export type { Citation } from "./citation";
+export type { Citation } from "@/lib/citations/citation";
 
 /** Named tiers, heaviest first. There is no numeric score (ADR 0003). */
 export const SEVERITY_TIERS = ["critical", "serious", "worth-noting"] as const;

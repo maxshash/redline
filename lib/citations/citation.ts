@@ -1,7 +1,7 @@
 /**
  * A citation is a span of the document text, and the only way to get one is
  * `locateCitation`, which checks it against the text. Every flag holds a
- * Citation, so a flag that points at nothing can't be built (ADR 0001).
+ * Citation, so a flag or an answer that points at nothing can't be built (ADR 0001).
  */
 
 declare const citationBrand: unique symbol;

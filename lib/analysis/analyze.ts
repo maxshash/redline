@@ -1,5 +1,5 @@
 import type { ModelClient } from "@/lib/model/client";
-import { locateCitation } from "./citation";
+import { locateCitation } from "@/lib/citations/citation";
 import { draftCounterOffers } from "./counter-offer";
 import {
   ANALYSIS_SCHEMA,

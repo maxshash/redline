@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { AnalysisError, analyzeDocument } from "@/lib/analysis/analyze";
-import { locateCitation, type Citation } from "@/lib/analysis/citation";
+import { locateCitation, type Citation } from "@/lib/citations/citation";
 import type { Analysis, Flag } from "@/lib/analysis/types";
 import { SEVERITY_TIERS } from "@/lib/analysis/types";
 import { ANALYSIS_SCHEMA_NAME } from "@/lib/analysis/prompt";
-import { checkRationale, figuresIn } from "@/lib/analysis/voice";
+import { checkRationale } from "@/lib/analysis/voice";
+import { figuresIn } from "@/lib/citations/support";
 import { expectCitationsVerbatim } from "../support/citations";
 import { loadFixture, type FixtureName } from "../support/fixtures";
 import { stubModel, type StubFaults } from "../support/stub-model";

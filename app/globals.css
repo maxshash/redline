@@ -124,6 +124,29 @@
     text-underline-offset: 7px;
   }
 
+  /*
+   * An answer from the question box. Not a severity rule and not an
+   * overprint: an answer has a different guarantee from a warning (it only
+   * restates what its sentences say, and it judges nothing), so it gets its
+   * own device, a double ink rule, and borrows nothing from either system.
+   */
+  .rule-answer {
+    border-top: 4px double var(--color-ink);
+  }
+
+  /*
+   * A sentence an answer quotes, in the source document. The same double rule
+   * as the answer block, drawn as an overline so it never collides with a
+   * tier's underline or the red-line overprint below the text. A text
+   * decoration, so it stops exactly where the sentence stops.
+   */
+  .mark-answer {
+    text-decoration-line: overline;
+    text-decoration-style: double;
+    text-decoration-color: var(--color-ink);
+    text-decoration-thickness: 1px;
+  }
+
   /* The mandated barline under a panel heading. */
   .barline {
     border-bottom: 7px solid var(--color-ink);

@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { AnalysisError, analyzeDocument } from "@/lib/analysis/analyze";
-import { locateCitation, type Citation } from "@/lib/analysis/citation";
+import { locateCitation, type Citation } from "@/lib/citations/citation";
 import { ANALYSIS_SCHEMA, ANALYSIS_SCHEMA_NAME } from "@/lib/analysis/prompt";
 import { groupRedLineMatches } from "@/lib/analysis/red-line-groups";
 import type { Analysis, RedLineMatch, RedLineRef } from "@/lib/analysis/types";
-import { FALLBACK_RED_LINE_EXPLANATION, checkRedLineExplanation, figuresIn } from "@/lib/analysis/voice";
+import { FALLBACK_RED_LINE_EXPLANATION, checkRedLineExplanation } from "@/lib/analysis/voice";
+import { figuresIn } from "@/lib/citations/support";
 import { expectCitationsVerbatim } from "../support/citations";
 import { FIXTURE_NAMES, loadFixture, type Fixture, type FixtureName } from "../support/fixtures";
 import { redLineCasesFound, sidecarRedLines } from "../support/red-lines";

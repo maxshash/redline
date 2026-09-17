@@ -7,6 +7,7 @@ import {
   type CounterOfferRequestFlag,
   type RedLineRequestEntry,
 } from "@/lib/analysis/prompt";
+import { ANSWER_SCHEMA_NAME } from "@/lib/answer/prompt";
 import type { JsonRequest, ModelClient } from "@/lib/model/client";
 import { FIXTURE_NAMES, loadFixture, type Fixture, type PlantedClause } from "./fixtures";
 
@@ -55,6 +56,21 @@ export interface StubFaults {
   counterOfferEmpty?: string;
   /** Counter-offer call: return an object with no counterOffers list. */
   counterOfferNoList?: boolean;
+
+  /** Question box: add a quote that isn't in the document. "extra" keeps the real quote too; "only" replaces it. */
+  answerFabricatedQuote?: "extra" | "only";
+  /** Question box: send the real quote twice. */
+  answerDuplicateQuote?: boolean;
+  /** Question box: answer a supported question with no quotes at all. */
+  answerNoQuotes?: boolean;
+  /** Question box: answer an unsupported question as if it were answered, with an invented claim and no quote. */
+  answerInventedClaim?: boolean;
+  /** Question box: add a figure to a supported answer that its quote doesn't contain. */
+  answerInventedFigure?: boolean;
+  /** Question box: return something that isn't a JSON object. */
+  answerOutput?: "not-json";
+  /** Question box: throw instead of answering. */
+  answerThrows?: boolean;
 }
 
 /** The quote the `fabricatedQuote` fault adds. It is in neither fixture. */
@@ -82,6 +98,11 @@ export interface StubModel extends ModelClient {
  * It tells the counter-offer request from the analysis request by the JSON
  * schema name, and answers it with the sidecar's `counterOffer` for each flag
  * whose cited text covers a planted sentence, keyed by the flag ids it was sent.
+ *
+ * It recognises the question-box request by its schema name too, and finds
+ * the sidecar question whose text is in the request. A supported question is
+ * answered with the sidecar answer, quoting its supporting sentence; an
+ * unsupported one comes back "not-in-document" with no quotes.
  */
 export function stubModel(faults: StubFaults = {}): StubModel {
   const fixtures = FIXTURE_NAMES.map(loadFixture);
@@ -95,6 +116,7 @@ export function stubModel(faults: StubFaults = {}): StubModel {
       stub.lastFixture = fixture;
 
       if (request.name === COUNTER_OFFER_SCHEMA_NAME) return answerCounterOffers(fixture, request, faults);
+      if (request.name === ANSWER_SCHEMA_NAME) return answerQuestionRequest(fixture, request, faults);
 
       if (faults.throws) throw new Error("stub model: simulated failure");
       if (faults.output === "not-json") return "Sorry, I can't help with that.";
@@ -208,6 +230,47 @@ function answerCounterOffers(fixture: Fixture, request: JsonRequest, faults: Stu
     });
   }
   return { counterOffers };
+}
+
+/** The claim the `answerInventedClaim` fault makes. Neither fixture says it. */
+export const INVENTED_CLAIM = "Yes, the client covers your health insurance for as long as the agreement runs.";
+
+/** The sentence the stub gives for a question the document doesn't answer. */
+export const STUB_NOT_IN_DOCUMENT = "The document doesn't cover this.";
+
+/** The figure the `answerInventedFigure` fault adds. */
+export const INVENTED_ANSWER_FIGURE = " That works out to about 90 days in practice.";
+
+/** The question-box requests among everything the stub was sent. */
+export function answerRequests(stub: StubModel): JsonRequest[] {
+  return stub.requests.filter((request) => request.name === ANSWER_SCHEMA_NAME);
+}
+
+function answerQuestionRequest(fixture: Fixture, request: JsonRequest, faults: StubFaults) {
+  if (faults.answerThrows) throw new Error("stub model: simulated answer failure");
+  if (faults.answerOutput === "not-json") return "I think the answer is probably yes.";
+
+  const { supported, unsupported } = fixture.sidecar.questions;
+  const hit = supported.find((q) => request.user.includes(q.question));
+  if (hit) {
+    let quotes = [hit.supportingSentence];
+    if (faults.answerFabricatedQuote === "extra") quotes = [...quotes, FABRICATED_QUOTE];
+    if (faults.answerFabricatedQuote === "only") quotes = [FABRICATED_QUOTE];
+    if (faults.answerDuplicateQuote) quotes = [...quotes, hit.supportingSentence];
+    if (faults.answerNoQuotes) quotes = [];
+    let answer = hit.answer;
+    if (faults.answerInventedFigure) {
+      if (/\b90\b|ninety/i.test(hit.supportingSentence + hit.answer)) throw new Error("stub model: pick another invented figure");
+      answer += INVENTED_ANSWER_FIGURE;
+    }
+    return { status: "answered", answer, quotes };
+  }
+
+  if (unsupported.some((q) => request.user.includes(q.question))) {
+    if (faults.answerInventedClaim) return { status: "answered", answer: INVENTED_CLAIM, quotes: [] };
+    return { status: "not-in-document", answer: STUB_NOT_IN_DOCUMENT, quotes: [] };
+  }
+  throw new Error("stub model: the answer request didn't contain a known sidecar question");
 }
 
 /** The planted sentence and the paragraph before it, joined by one space instead of the blank line. */

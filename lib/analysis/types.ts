@@ -113,6 +113,12 @@ export interface RedLineMatch {
 export interface Analysis {
   /** Plain English, stating only what the document says. */
   summary: string;
+  /**
+   * False when the document isn't a set of terms at all, such as a recipe or
+   * meeting notes. "No warnings" then means there was nothing to check, not
+   * that an agreement came back clean (ADR 0006).
+   */
+  isAgreement: boolean;
   /** Critical, then serious, then worth noting; within a tier, in document order. */
   flags: FlagWithCounterOffer[];
   /** Matches against the reader's red lines, in document order. Independent of `flags`. */

@@ -8,7 +8,7 @@ import { checkRationale } from "@/lib/analysis/voice";
 import { figuresIn } from "@/lib/citations/support";
 import { expectCitationsVerbatim } from "../support/citations";
 import { loadFixture, type FixtureName } from "../support/fixtures";
-import { stubModel, type StubFaults } from "../support/stub-model";
+import { MARKER_SENTENCE, stubModel, type StubFaults } from "../support/stub-model";
 
 const adhesion = loadFixture("adhesion-contract");
 const clean = loadFixture("clean-agreement");
@@ -141,6 +141,33 @@ describe("clean document", () => {
       redLineExplanationsReplaced: 0,
     });
     expect(analysis.redLineMatches).toEqual([]);
+  });
+});
+
+describe("documents that aren't agreements", () => {
+  it("reads as an agreement by default, and when the model leaves the answer out", async () => {
+    expect((await analyze("clean-agreement")).isAgreement).toBe(true);
+    expect((await analyze("clean-agreement", { output: "no-is-agreement" })).isAgreement).toBe(true);
+  });
+
+  it("is reported when the model says so, without dropping any flag", async () => {
+    const analysis = await analyze("adhesion-contract", { notAgreement: true });
+    expect(analysis.isAgreement).toBe(false);
+    expect(analysis.flags).toHaveLength(adhesion.sidecar.plantedClauses.length);
+  });
+});
+
+describe("summary", () => {
+  it("drops a sentence that talks about the prompt's marker lines", async () => {
+    const analysis = await analyze("clean-agreement", { summaryMentionsMarkers: "extra" });
+    expect(analysis.summary).toBe(clean.sidecar.summary);
+    expect(analysis.summary).not.toContain(MARKER_SENTENCE);
+  });
+
+  it("is invalid output when nothing is left once those sentences are gone", async () => {
+    await expect(analyze("clean-agreement", { summaryMentionsMarkers: "only" })).rejects.toMatchObject({
+      kind: "invalid-output",
+    });
   });
 });
 

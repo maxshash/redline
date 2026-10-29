@@ -72,6 +72,9 @@ export const FACTS_COPY = {
   cleanNoted: (count: number) =>
     count === 1 ? "One clause is still worth a look, listed below." : `${count} clauses are still worth a look, listed below.`,
   cleanNothing: "Redline didn't find other clauses that shift cost or control onto you.",
+  notAgreementHeading: "Not a contract",
+  notAgreementBody: "This doesn't look like a contract, lease or terms of service, so Redline had no terms to check.",
+  notAgreementFlagged: "A few sentences still read like terms. They're listed below.",
   counterOfferHeading: "Ask for this instead",
   counterOfferSource: "Suggested by Redline, not quoted from the document",
   counterOfferUnavailable: "Redline couldn't suggest other wording for this clause.",
@@ -193,7 +196,9 @@ function AnalysisResult({
 }) {
   const { flags, redLineMatches } = analysis;
   const groups = groupRedLineMatches(flags, redLineMatches);
-  const clean = !flags.some((flag) => flag.severity === "critical" || flag.severity === "serious");
+  const notAgreement = !analysis.isAgreement;
+  // A clean verdict only means something for an agreement (ADR 0006).
+  const clean = !notAgreement && !flags.some((flag) => flag.severity === "critical" || flag.severity === "serious");
 
   return (
     <>
@@ -219,8 +224,18 @@ function AnalysisResult({
       <section>
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 pt-3">
           <h3 className="text-[1.125rem] font-extrabold uppercase tracking-[0.04em]">{FACTS_COPY.warningsHeading}</h3>
-          <p className={`tabular ${narrowClass}`}>{tierCounts(flags)}</p>
+          {(!notAgreement || flags.length > 0) && <p className={`tabular ${narrowClass}`}>{tierCounts(flags)}</p>}
         </div>
+
+        {notAgreement && (
+          <div className="print-set hairline pb-4 pt-3">
+            <p className="text-[1.25rem] font-extrabold uppercase leading-[1.05] tracking-[0.02em]">
+              {FACTS_COPY.notAgreementHeading}
+            </p>
+            <p className={bodyClass}>{FACTS_COPY.notAgreementBody}</p>
+            {flags.length > 0 && <p className={bodyClass}>{FACTS_COPY.notAgreementFlagged}</p>}
+          </div>
+        )}
 
         {clean && (
           <div className="print-set hairline pb-4 pt-3">

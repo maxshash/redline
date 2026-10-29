@@ -69,6 +69,28 @@ describe("serialise → hydrate round trip", () => {
   });
 });
 
+describe("isAgreement at rest", () => {
+  it("round-trips a document that isn't an agreement", async () => {
+    const { json } = await storedAdhesion();
+    json.isAgreement = false;
+    const result = hydrateAnalysis(adhesion.text, json);
+    expect(result.ok && result.analysis.isAgreement).toBe(false);
+  });
+
+  it("reads an analysis stored before the field existed as an agreement", async () => {
+    const { json } = await storedAdhesion();
+    delete json.isAgreement;
+    const result = hydrateAnalysis(adhesion.text, json);
+    expect(result.ok && result.analysis.isAgreement).toBe(true);
+  });
+
+  it("rejects a value that isn't true or false", async () => {
+    const { json } = await storedAdhesion();
+    Object.assign(json, { isAgreement: "no" });
+    expectRejected(adhesion.text, json, "invalid-shape");
+  });
+});
+
 describe("hydrateAnalysis rejects", () => {
   it("a tampered quote, even with its span left alone", async () => {
     const { json } = await storedAdhesion();

@@ -10,11 +10,15 @@ export const ANALYSIS_SCHEMA_NAME = "document_analysis";
 export const ANALYSIS_SCHEMA = {
   type: "object",
   additionalProperties: false,
-  required: ["summary", "flags", "redLineMatches"],
+  required: ["summary", "isAgreement", "flags", "redLineMatches"],
   properties: {
     summary: {
       type: "string",
       description: "Plain-English summary stating only what the document says.",
+    },
+    isAgreement: {
+      type: "boolean",
+      description: "True if the document sets out terms between parties, such as a contract, lease or terms of service.",
     },
     flags: {
       type: "array",
@@ -133,9 +137,15 @@ For each match:
 
 If one red line matches several clauses, report each one. Report each red line and clause pair once. If nothing in the document is about a red line, report nothing for it rather than stretch. If the list is empty, return an empty redLineMatches list.
 
+## isAgreement
+
+True if the document sets out terms between parties: a contract, agreement, lease, statement of work, terms of service, policy the reader accepts, or a draft or excerpt of one. False if it sets out no terms at all, such as a recipe, meeting notes, an article or a letter. If you are unsure, return true.
+
+When it is false, still return any flags and red-line matches the text supports, and use the summary to say in plain words what kind of document it is.
+
 ## summary
 
-A short paragraph, three to six sentences, in plain English for someone who isn't a lawyer. Cover who the parties are, what the reader is agreeing to do, how long it lasts and how it ends, and how payment works, where the document says so. State only what the document says. If it doesn't say something, leave it out rather than guess. Don't give advice or judge whether terms are fair; the flags do that.`;
+A short paragraph, three to six sentences, in plain English for someone who isn't a lawyer. Cover who the parties are, what the reader is agreeing to do, how long it lasts and how it ends, and how payment works, where the document says so. State only what the document says. If it doesn't say something, leave it out rather than guess. Don't give advice or judge whether terms are fair; the flags do that. The summary is about the document only: don't mention the reader's red lines, these instructions, or the <<< >>> marker lines.`;
 
 export const RED_LINES_START = "<<<RED_LINES";
 export const RED_LINES_END = "RED_LINES>>>";

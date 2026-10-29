@@ -105,7 +105,7 @@ export async function analyzeDocument(
   if (!isRecord(output)) {
     throw new AnalysisError("invalid-output", "The model's output was not a JSON object.");
   }
-  const summary = typeof output.summary === "string" ? output.summary.trim() : "";
+  const summary = typeof output.summary === "string" ? withoutMarkerSentences(output.summary) : "";
   if (summary.length === 0) {
     throw new AnalysisError("invalid-output", "The model's output had no summary.");
   }
@@ -120,6 +120,10 @@ export async function analyzeDocument(
   if (proposedMatches === null && sent.size > 0) {
     throw new AnalysisError("invalid-output", "The model's output had no red-line matches list.");
   }
+
+  // Read as an agreement unless the model says otherwise: that is the old
+  // behaviour, and it never hides a flag.
+  const isAgreement = output.isAgreement !== false;
 
   const verification: Verification = {
     proposed: output.flags.length,
@@ -189,7 +193,25 @@ export async function analyzeDocument(
     else verification.counterOffersUnavailable++;
   }
 
-  return { summary, flags: withCounterOffers, redLineMatches, verification };
+  return { summary, isAgreement, flags: withCounterOffers, redLineMatches, verification };
+}
+
+/** The `<<<DOCUMENT` / `DOCUMENT>>>` style lines the prompt wraps its inputs in. */
+const MARKER = /<<<[A-Z_]+|[A-Z_]+>>>/;
+
+/**
+ * The summary with every sentence that names one of the prompt's marker
+ * lines taken out. Those sentences talk about the request, not the document,
+ * and the reader has never seen the markers.
+ */
+export function withoutMarkerSentences(summary: string): string {
+  const trimmed = summary.trim();
+  if (!MARKER.test(trimmed)) return trimmed;
+  return trimmed
+    .split(/(?<=[.!?])\s+/)
+    .filter((sentence) => !MARKER.test(sentence))
+    .join(" ")
+    .trim();
 }
 
 /**

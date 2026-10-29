@@ -33,7 +33,11 @@ export interface StubFaults {
   /** Leave these clauses out of the payload entirely. */
   omit?: string[];
   /** Replace the whole payload. */
-  output?: "not-json" | "no-summary" | "no-flags" | "no-red-line-matches";
+  output?: "not-json" | "no-summary" | "no-flags" | "no-red-line-matches" | "no-is-agreement";
+  /** Say the document isn't an agreement. */
+  notAgreement?: boolean;
+  /** Add a sentence to the summary that talks about the prompt's marker lines. */
+  summaryMentionsMarkers?: "extra" | "only";
 
   /** Red-line matches: add a match naming a red line id that wasn't sent. */
   redLineUnknownId?: boolean;
@@ -76,6 +80,9 @@ export interface StubFaults {
 /** The quote the `fabricatedQuote` fault adds. It is in neither fixture. */
 export const FABRICATED_QUOTE =
   "Consultant shall pay Client a cancellation fee of five thousand dollars ($5,000) if Consultant ends this Agreement early.";
+
+/** The sentence the `summaryMentionsMarkers` fault adds. */
+export const MARKER_SENTENCE = "The document between <<<DOCUMENT and DOCUMENT>>> is a services agreement.";
 
 export interface StubModel extends ModelClient {
   /** Every request, in order: analysis and counter-offer calls alike. */
@@ -155,11 +162,16 @@ export function stubModel(faults: StubFaults = {}): StubModel {
       }
 
       const redLineMatches = answerRedLines(fixture, request, faults);
+      const isAgreement = !faults.notAgreement;
+      let summary = fixture.sidecar.summary;
+      if (faults.summaryMentionsMarkers === "extra") summary = `${MARKER_SENTENCE} ${summary}`;
+      if (faults.summaryMentionsMarkers === "only") summary = MARKER_SENTENCE;
 
-      if (faults.output === "no-summary") return { flags, redLineMatches };
-      if (faults.output === "no-flags") return { summary: fixture.sidecar.summary, redLineMatches };
-      if (faults.output === "no-red-line-matches") return { summary: fixture.sidecar.summary, flags };
-      return { summary: fixture.sidecar.summary, flags, redLineMatches };
+      if (faults.output === "no-summary") return { isAgreement, flags, redLineMatches };
+      if (faults.output === "no-flags") return { summary, isAgreement, redLineMatches };
+      if (faults.output === "no-red-line-matches") return { summary, isAgreement, flags };
+      if (faults.output === "no-is-agreement") return { summary, flags, redLineMatches };
+      return { summary, isAgreement, flags, redLineMatches };
     },
   };
   return stub;

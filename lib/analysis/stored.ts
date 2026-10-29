@@ -55,6 +55,8 @@ export interface StoredRedLineMatch {
 export interface StoredAnalysis {
   version: typeof STORED_ANALYSIS_VERSION;
   summary: string;
+  /** Left out by analyses stored before it existed; those read as agreements. */
+  isAgreement?: boolean;
   flags: StoredFlag[];
   redLineMatches: StoredRedLineMatch[];
   verification: Verification;
@@ -90,6 +92,7 @@ export function serializeAnalysis(analysis: Analysis): StoredAnalysis {
   return {
     version: STORED_ANALYSIS_VERSION,
     summary: analysis.summary,
+    isAgreement: analysis.isAgreement,
     flags: analysis.flags.map((flag) => ({
       citation: serializeCitation(flag.citation),
       clauseType: flag.clauseType,
@@ -233,10 +236,14 @@ const SCORE_LIKE = /score|rank|rating|points|weight/i;
 
 function readAnalysis(documentText: string, json: unknown): Analysis {
   const record = object(json, "");
-  exactKeys(record, ANALYSIS_KEYS, [], "");
+  exactKeys(record, ANALYSIS_KEYS, ["isAgreement"], "");
   if (record.version !== STORED_ANALYSIS_VERSION) throw new Reject("invalid-shape", ".version");
 
   const summary = text(record.summary, ".summary");
+  if (record.isAgreement !== undefined && typeof record.isAgreement !== "boolean") {
+    throw new Reject("invalid-shape", ".isAgreement");
+  }
+  const isAgreement = record.isAgreement !== false;
   const flags = array(record.flags, ".flags").map((flag, i) => readFlag(documentText, flag, `.flags[${i}]`));
   const redLineMatches = array(record.redLineMatches, ".redLineMatches").map((match, i) =>
     readMatch(documentText, match, `.redLineMatches[${i}]`),
@@ -253,7 +260,7 @@ function readAnalysis(documentText: string, json: unknown): Analysis {
     throw new Reject("inconsistent-counts", ".verification");
   }
 
-  return { summary, flags, redLineMatches, verification };
+  return { summary, isAgreement, flags, redLineMatches, verification };
 }
 
 function readFlag(documentText: string, json: unknown, path: string): FlagWithCounterOffer {

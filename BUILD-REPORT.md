@@ -79,6 +79,8 @@ Model: whatever `OPENROUTER_MODEL` says, pinned to Fireworks (`allow_fallbacks: 
 
 ## Could not verify
 
+> **Update, 2026-10-29.** The app is now deployed on Vercel with a live Supabase project. The browser pass in FINDINGS.md confirmed these in production: the signed-in screens (frame, filled library, `/library/[id]`, `/red-lines`), the session surviving reloads, the save round trip with an analysis, red-line add, edit and remove, and the newest-analysis-per-document library query. Still unverified in production: sign-up, email confirmation, sign-out, and the 25-entry red-line cap. Lint now runs (see `eslint.config.mjs`). The list below is left as written on 2026-09-17.
+
 **Supabase** (no project exists):
 - Real sign-up, sign-in, email confirmation, the session surviving a reload, token refresh in the proxy, and sign-out clearing cookies.
 - Any migration on hosted Supabase. All three (`documents`, `red_lines`, `analyses`) have only run in PGlite with the auth stand-in.

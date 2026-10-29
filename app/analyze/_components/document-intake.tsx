@@ -35,12 +35,16 @@ export function DocumentIntake({ onDocument }: { onDocument: (document: Document
   const [reading, setReading] = useState<string | null>(null);
   const [problem, setProblem] = useState<Problem | null>(null);
   const [pasted, setPasted] = useState("");
+  // Shown under the paste box, next to the button that caused it, not above the file picker.
+  const [pasteProblem, setPasteProblem] = useState<string | null>(null);
+  const pasteBox = useRef<HTMLTextAreaElement>(null);
   // Only the latest attempt may finish; a slow earlier file must not win.
   const attempt = useRef(0);
 
   async function readFile(file: File) {
     const id = ++attempt.current;
     setProblem(null);
+    setPasteProblem(null);
     setReading(file.name);
 
     let result: ExtractionResult;
@@ -63,11 +67,14 @@ export function DocumentIntake({ onDocument }: { onDocument: (document: Document
     event.preventDefault();
     attempt.current++;
     setReading(null);
+    setProblem(null);
     const text = normalizeExtractedText(pasted);
     if (text.length === 0) {
-      setProblem({ fileName: null, message: "Paste the document's text into the box first." });
+      setPasteProblem("Paste the document's text into the box first.");
+      pasteBox.current?.focus();
       return;
     }
+    setPasteProblem(null);
     onDocument({ title: titleFromText(text), text, source: { kind: "paste" } });
   }
 
@@ -137,12 +144,23 @@ export function DocumentIntake({ onDocument }: { onDocument: (document: Document
           </label>
           <textarea
             id="document-text"
+            ref={pasteBox}
             value={pasted}
-            onChange={(event) => setPasted(event.currentTarget.value)}
+            onChange={(event) => {
+              setPasted(event.currentTarget.value);
+              setPasteProblem(null);
+            }}
+            aria-invalid={pasteProblem !== null}
+            aria-describedby={pasteProblem ? "document-text-problem" : undefined}
             rows={10}
             spellCheck={false}
             className="mt-3 block w-full resize-y border-[3px] border-ink bg-panel-field px-3 py-2.5 font-[family-name:var(--font-source)] text-[0.9375rem] leading-[1.7] text-ink"
           />
+          {pasteProblem && (
+            <p id="document-text-problem" role="alert" className="mt-3 border-[3px] border-ink px-4 py-3 text-[1rem] font-bold leading-[1.45]">
+              {pasteProblem}
+            </p>
+          )}
           <button type="submit" className={`${buttonClass} mt-4`}>
             Use this text
           </button>

@@ -39,6 +39,7 @@ describe.skipIf(!hasKey)("analyzeDocument against the real model", () => {
     expectCitationsVerbatim(fixture.text, analysis);
     expectEveryRedLineCaseMatched(fixture, analysis);
     expect(analysis.summary.length).toBeGreaterThan(0);
+    expect(analysis.isAgreement).toBe(true);
 
     const heavy = plantedClausesFound(fixture, analysis.flags).filter(
       (result) => result.clause.expectedSeverity !== "worth-noting",
@@ -57,6 +58,7 @@ describe.skipIf(!hasKey)("analyzeDocument against the real model", () => {
     expectCitationsVerbatim(fixture.text, analysis);
     expectEveryRedLineCaseMatched(fixture, analysis);
     expect(analysis.summary.length).toBeGreaterThan(0);
+    expect(analysis.isAgreement).toBe(true);
     const heavy = analysis.flags.filter((flag) => flag.severity !== "worth-noting");
     expect(
       heavy.map((flag) => `${flag.severity}: ${flag.citation.text}`),

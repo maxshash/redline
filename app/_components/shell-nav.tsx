@@ -3,19 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-/** Screens that exist today. Later tickets add theirs here. */
-const SCREENS = [
-  { href: "/library", label: "Library" },
-  { href: "/red-lines", label: "Red lines" },
-  { href: "/analyze", label: "Check a document" },
-] as const;
+export interface Screen {
+  href: string;
+  label: string;
+}
 
-export function ShellNav() {
+export function ShellNav({ screens }: { screens: readonly Screen[] }) {
   const pathname = usePathname();
   return (
-    <nav aria-label="Account">
-      <ul className="flex gap-x-6">
-        {SCREENS.map((screen) => {
+    <nav aria-label="Main">
+      <ul className="flex flex-wrap gap-x-6">
+        {screens.map((screen) => {
           const current = pathname === screen.href || pathname.startsWith(`${screen.href}/`);
           return (
             <li key={screen.href}>

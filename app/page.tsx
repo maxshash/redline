@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ContractFacts } from "./_components/contract-facts";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { getSignedInUser } from "@/lib/supabase/server";
 
 const TIERS = [
   {
@@ -44,11 +46,35 @@ const LIMITS = [
   },
 ];
 
-export default function Home() {
+const accountLinkClass =
+  "text-[0.9375rem] font-bold uppercase tracking-[0.06em] text-carton-ink underline decoration-1 underline-offset-[3px] hover:decoration-[3px]";
+
+export default async function Home() {
+  const configured = isSupabaseConfigured();
+  const user = configured ? await getSignedInUser() : null;
+
   return (
     <main className="bg-carton text-carton-ink">
       {/* ============ The demonstration ============ */}
       <section className="mx-auto max-w-[86rem] px-4 pb-16 pt-5 sm:px-7 sm:pb-24 sm:pt-7">
+        {configured && (
+          <nav aria-label="Account" className="flex justify-end gap-x-6 pb-4">
+            {user ? (
+              <Link href="/library" className={accountLinkClass}>
+                Your library
+              </Link>
+            ) : (
+              <>
+                <Link href="/sign-in" className={accountLinkClass}>
+                  Sign in
+                </Link>
+                <Link href="/sign-up" className={accountLinkClass}>
+                  Create account
+                </Link>
+              </>
+            )}
+          </nav>
+        )}
         <ContractFacts />
       </section>
 
